@@ -3,7 +3,7 @@
 **Agente investigador:** AGENTE INVESTIGADOR 2 (arquitectura técnica)
 **Alcance temporal:** julio 2024 – julio 2026
 **Fecha de acceso a todas las fuentes:** 2026-07-01
-**Estado:** EN PROGRESO — actualización incremental
+**Estado:** COMPLETO (primera pasada) — 2026-07-01
 
 ---
 
@@ -351,7 +351,89 @@ Concepto de **"golden agents"**: soluciones "battle-tested and verified" que "en
 
 #### 3.10.8 Limitaciones explícitas de esta fuente
 
-🔵 **INFERENCIA DEL AGENTE / BRECHA**: aun siendo la fuente más técnica encontrada, el blog **no publica código fuente, pseudocódigo, diagramas de arquitectura descargables, ni detalles de integración con sistemas empresariales específicos de ningún dominio (tampoco procurement)**. Es arquitectónico/conceptual con nombres de tecnologías reales, pero no es una guía de implementación paso a paso ni un repositorio de referencia público.
+🔵 **INFERENCIA DEL AGENTE / BRECHA**: aun siendo la fuente más técnica encontrada, el blog **no publica código fuente, pseudocódigo, diagramas de arquitectura descargables, ni detalles de integración con sistemas empresariales específicos de ningún dominio (tampoco procurement)**. Es arquitectónico/conceptual con nombres de tecnologías reales, pero no es una guía de implementación paso a paso ni un repositorio de referencia público. (Ver sección 2.6 para el repositorio de código real, ARK, que sí lo es.)
+
+### 3.11 Evaluaciones (evals) — la fuente técnica más detallada sobre este tema específico
+
+🟢 **HECHO VERIFICADO** — Fuente: *Evaluations for the agentic world*, blog de QuantumBlack (AI by McKinsey) en Medium, Anne-Gabrielle Starkloff, Sallah Kokaina, Sohrab Rahimi (editora: Jo Stichbury), 29 de enero de 2026. URL: https://medium.com/quantumblack/evaluations-for-the-agentic-world-c3c150f0dd5a (acceso 2026-07-01).
+
+**Tres niveles de evaluación (arquitectura tricapa)**:
+1. **Evaluaciones de LLM** — evaluación directa de respuestas del modelo fundacional (prompt in, response out), LLM-based o manual. Métricas: factualidad, calibración, robustez, toxicidad.
+2. **Evaluaciones de agente individual** — evalúan trayectorias completas (trajectories), cubriendo: núcleo LLM (alucinaciones, desviación de prompts), interfaz de herramientas (llamadas inválidas, alucinación de herramientas), y capa de memoria (pérdida de contexto, recuperación obsoleta).
+3. **Evaluaciones multi-agente** — enfoque en dinámicas del sistema completo, validando "**system invariants**, immutable constraints such as no double refunds, no ticket left unowned, no negative balances, and PII in logs."
+
+**Marco de 5 ejes de métricas**: (1) Capacidad y eficiencia (tasa de éxito, uso de recursos); (2) Robustez y adaptabilidad (resiliencia ante cambios); (3) Seguridad y ética (sesgos, vulnerabilidades, privacidad); (4) Interacción centrada en humanos (satisfacción, explicabilidad); (5) Económica/sostenibilidad (valor vs. costo). Recomendación práctica citada: "teams usually select five to seven metrics per workflow."
+
+**Implementación técnica del pipeline de evaluación**:
+- **Dataset dorado y estándares**: "library of standard evaluation scenarios by domain", "standard KPI schema aligned with the multi-axis view", trazas estandarizadas alineadas con **OpenTelemetry** u **OpenLLMetry**.
+- **Pipelines CI/CD aumentados**: "auto-triggered evaluation runs at CI/CD gates using golden datasets"; uso de "scenario generators or simulators" para inyectar casos out-of-distribution (OOD), adversariales y edge cases; "shadow-mode or canary testing" contra tráfico real.
+- **Observabilidad aumentada en runtime**: monitoreo multidimensional continuo, "metric-driven alerts; use adaptive thresholds and joint anomaly detection", captura de trazas semánticas completas (planes, llamadas a herramientas, mutaciones de memoria).
+
+**Herramientas y frameworks nombrados explícitamente**: **Arize Phoenix** (plataforma de evaluación operacional, citada en caso de banco europeo); **OpenTelemetry/OpenLLMetry** (estándares de trazabilidad); **"Agent-as-a-Judge"** (método de evaluación impulsado por LLM); **guardrails "out-of-the-box" de Azure** (toxicidad, nocividad, tono de voz) — es la única mención directa de un proveedor cloud específico (Microsoft Azure) encontrada en toda la investigación hasta ahora.
+
+**Modos de fallo documentados en sistemas multi-agente en producción** (lista valiosa para diseño de guardrails):
+- "Multi-agent oscillation ('ping-pong' handoffs)."
+- Deadlocks y ambigüedad de propiedad de tareas.
+- Escrituras conflictivas e inconsistencias de datos (ej. doble reembolso, registros huérfanos).
+- Envenenamiento de memoria ("memory poisoning") causando sesgo comportamental a largo plazo.
+- "Resource-exhaustion cascades" por lógica de agente descontrolada.
+
+**Ciclo de vida de evaluación en 3 fases con gobernanza cross-funcional**:
+
+| Fase | Propietarios | Responsabilidades |
+|---|---|---|
+| Planificación | Producto + Ingeniería + SMEs | Diseño de evaluaciones, KPIs, datasets dorados |
+| Build (evaluación offline) | Desarrolladores + Testers + Riesgo/Compliance | Integración CI/CD, validación de escenarios, aprobación de scope |
+| Operación (evaluación online) | SRE/Operaciones + Ingenieros IA | Monitoreo runtime, respuesta a incidentes, diagnóstico |
+| Post-run | SMEs de dominio + Ingenieros IA | Evolución de artefactos/datasets basada en uso real |
+
+**Caso de banco europeo**: framework escalable con métricas cuantitativas (latencia, costo, consistencia de output, precisión factual) y cualitativas (cuestionarios de SMEs); plataforma Arize Phoenix para evaluación operacional por query; tracking de score y drift.
+
+**Caso de telco europeo**: 4 casos de IA agéntica (verificación, estado de orden, recuperación de conexión, gestor de citas técnicas); agentes operando independientemente con historial compartido; evaluación funcional con scripts automatizados/semi-automatizados; evaluación de calidad post-llamada mediante agent-as-a-judge sobre dimensiones: "first-time resolution, accuracy, privacy, safety, no hallucinations, tone, clarity, professionalism."
+
+**Referencias académicas citadas por McKinsey en este artículo** (útiles como bibliografía técnica adicional, no son afirmaciones de McKinsey sino papers externos que McKinsey cita): Liang et al. 2022 "Holistic evaluation of language models" (arXiv:2211.09110); Liu et al. 2023 "AgentBench: Evaluating LLMs as agents" (arXiv:2308.03688); Yehudai et al. 2025 "Survey on evaluation of LLM-based agents" (arXiv:2503.16416); Yang et al. 2024 "Generalized out-of-distribution detection: A survey."
+
+**Limitación reconocida explícitamente por McKinsey**: "even with multi-level evaluations, CI/CD gates, and advanced monitoring, agentic systems will face situations teams did not anticipate" — y "the finite nature of evaluation suites (they can only cover a limited set of scenarios)" requiere vigilancia continua ante eventos OOD y nuevos patrones de ataque.
+
+🔵 **INFERENCIA DEL AGENTE**: este artículo es, junto con el blog de "agentic mesh" (3.10) y el repo ARK (2.6), la evidencia más fuerte de que McKinsey SÍ tiene profundidad técnica real en al menos un sub-dominio (evaluaciones/AgentOps) más allá del discurso ejecutivo — probablemente reflejo directo de trabajo de campo de QuantumBlack Labs. Ningún caso de este artículo es de procurement (son de banca y telco).
+
+### 3.12 "One year of agentic AI: Six lessons from the people doing the work" — lecciones prácticas de +50 builds
+
+🟢 **HECHO VERIFICADO** — Fuente: *One year of agentic AI: Six lessons from the people doing the work*, McKinsey/QuantumBlack, Lareina Yee, Michael Chui, Roger Roberts, Stephen Xu, 12 de septiembre de 2025. URL: https://www.mckinsey.com/capabilities/quantumblack/our-insights/one-year-of-agentic-ai-six-lessons-from-the-people-doing-the-work (acceso 2026-07-01). Basado en "more than 50 agentic AI builds led by McKinsey, as well as dozens of others in the marketplace." Mismos autores que el artículo fundacional de julio 2024 (sección 2.1) — es su "seguimiento" natural un año después.
+
+**Lección 1 — El foco es el workflow, no el agente**: "Companies can redesign these types of workflows by thoughtfully deploying a targeted mix of rule-based systems, analytical AI, gen AI, and agents, all underpinned by a common orchestration framework" — y aquí SÍ nombra explícitamente frameworks de orquestación: **AutoGen, CrewAI, LangGraph** (mismos frameworks del blog técnico de mesh, sección 3.10.1 — consistencia entre fuentes). Técnica de bucle de aprendizaje citada: en un proveedor de resolución alternativa de disputas, "every user edit in the document editor was logged and categorized" para reentrenar/refinar agentes iterativamente.
+
+**Lección 2 — Los agentes no siempre son la respuesta**: McKinsey da una tabla de decisión explícita sobre cuándo usar qué tecnología:
+
+| Tipo de tarea | Herramienta recomendada |
+|---|---|
+| Basada en reglas, repetitiva, entrada estructurada | Automatización basada en reglas |
+| Entrada no estructurada (documentos largos) | Gen AI / NLP |
+| Clasificación/predicción sobre datos históricos | Analytics predictivo |
+| Requiere síntesis, juicio, creatividad | Gen AI |
+| Multistep, alta varianza, contextos diversos | Agentes de IA |
+
+Advertencia explícita: en workflows de "baja varianza y alta estandarización...tend to be tightly governed", los agentes basados en LLM "could add more complexity and uncertainty than value" — es decir, McKinsey desaconseja activamente usar agentes para todo.
+
+**Lección 3 — Invertir en evaluaciones y construir confianza (lista de tipos de evals con nombre técnico)**:
+- **Task success rate**: "percentage of workflows completed correctly without escalation or human intervention."
+- **F1 score / Precision-Recall**: para clasificación y extracción.
+- **Retrieval accuracy**: "percentage of correct documents, facts, or evidence retrieved" (relevante para RAG).
+- **Semantic similarity**: vía embeddings (cosine similarity).
+- **LLM as judge**: evaluación contra gold standards.
+- **Bias detection**: vía confusion matrices.
+- **Hallucination rate**: frecuencia de afirmaciones factuales incorrectas.
+- **Calibration error**: alineación entre confianza del agente y precisión real.
+
+Principio explícito: "there can be no 'launch and leave' in this arena" — evaluación continua, no un checkpoint único pre-lanzamiento.
+
+**Lección 4 — Trazabilidad y verificación en cada paso**: "Agent performance should be verified at each step of the workflow." Caso de observabilidad: un proveedor de resolución de disputas detectó una caída de precisión causada porque "certain user segments were submitting lower-quality data, leading to incorrect interpretations", y corrigieron ajustando prácticas de captura de datos y lógica de parsing — ejemplo real de cómo la observabilidad permite diagnóstico de causa raíz.
+
+**Lección 5 — Reutilización de agentes y componentes**: "developing a centralized set of validated services (such as LLM observability or preapproved prompts) and assets (application patterns, reusable code, training materials)" puede "virtually eliminate 30 to 50 percent of the nonessential work typically required" (🟡 cifra sin metodología detallada). "Integrating these capabilities into a single platform is critical."
+
+**Lección 6 — Los humanos siguen siendo esenciales, con roles transformados**: "people will need to oversee model accuracy, ensure compliance, use judgment, and handle edge cases." Ejemplo de UX para confianza: una aseguradora property & casualty desarrolló "interactive visual elements (bounding boxes, highlights, automated scrolling)" logrando "user acceptance levels near 95 percent" (🟡 cifra sin metodología).
+
+**Brecha confirmada**: este artículo tampoco contiene referencias a procurement/supply chain — los casos son de servicios legales, banca y seguros.
 
 ---
 
@@ -548,11 +630,73 @@ Componentes de costo: personal (interno y externo), tecnología, datos, gestión
 
 ## 6. Brechas identificadas (McKinsey no publica...)
 
-*(pendiente de investigación)*
+Esta sección documenta explícitamente lo que McKinsey/QuantumBlack **NO** publica en sus fuentes técnicas revisadas, relevante para nuestro propio diseño.
+
+### 6.1 Brechas de integración específica a procurement/ERP
+
+🟡 **BRECHA CONFIRMADA**: en ninguna de las ~12 fuentes primarias revisadas (artículos de McKinsey.com, blog de QuantumBlack en Medium, ni el repositorio ARK) se menciona el nombre de **ninguna plataforma S2P o ERP específica** en el contexto de integración técnica de agentes — no aparece SAP Ariba, Oracle, Coupa, Jaggaer, Zycus, GEP, Ivalua, Workday, ni ningún otro nombre de suite de procurement. La única plataforma empresarial nombrada explícitamente en cualquier contexto de integración es **ServiceNow**, y es en el dominio de ITSM (IT service management), no procurement. Esto es una brecha relevante para nuestro proyecto: McKinsey habla de integración con "sistemas legacy" en abstracto, pero no publica ningún patrón de integración concreto (conectores, APIs, mapeos de datos) específico a un ERP o suite S2P real.
+
+### 6.2 Brecha de arquitectura de memoria concreta
+
+🟡 **BRECHA CONFIRMADA**: McKinsey reconoce la limitación de memoria de los LLM y afirma que la arquitectura del mesh la resuelve mediante "capas de memoria", pero **no especifica la implementación técnica** — no se menciona explícitamente ninguna base de datos vectorial (Pinecone, Weaviate, pgvector, etc.), ni arquitectura de memoria episódica vs. semántica, ni políticas de TTL/expiración, ni cómo se particiona memoria entre agentes de un mismo equipo. El repositorio ARK menciona "pluggable memory backends" pero no detalla cuáles son las opciones soportadas ni recomendadas.
+
+### 6.3 Brecha de RAG agéntico como patrón nombrado
+
+🟡 **BRECHA CONFIRMADA**: el término "agentic RAG" (patrón de la industria donde un agente decide dinámicamente qué y cuándo recuperar información, en lugar de una recuperación fija pre-generación) **no aparece explícitamente** en ninguna de las fuentes de McKinsey revisadas. Se puede inferir que las "evaluaciones de retrieval accuracy" (sección 3.12, Lección 3) y la "AI Asset Registry" con ejemplos de input/output presuponen algún tipo de recuperación, pero McKinsey no lo teoriza como patrón arquitectónico explícito ni lo nombra con la terminología estándar de la industria.
+
+### 6.4 Brecha de detalle de negociación/contratos con IA generativa de texto legal
+
+🟡 **BRECHA PARCIAL**: aunque el caso de telco (sección 5.4, caso 3) menciona "generación automática de contraofertas" en negociación, McKinsey no detalla CÓMO se genera ese texto (¿plantillas + LLM?, ¿fine-tuning sobre contratos históricos?, ¿RAG sobre cláusulas aprobadas legalmente?), ni qué guardrails específicos de compliance legal aplican a la generación automática de cláusulas contractuales. Tampoco se menciona ninguna integración con sistemas CLM (Contract Lifecycle Management) por nombre.
+
+### 6.5 Brecha de costos/economía de tokens en producción
+
+🟡 **BRECHA CONFIRMADA**: si bien se menciona "token usage" como una métrica de feedback (sección 3.10.4) y "control de costo runtime" como beneficio de las evaluaciones (sección 3.11), McKinsey no publica cifras concretas de costo por transacción/tarea agéntica, ni comparativas de costo entre arquitecturas (ej. costo de un pipeline multi-agente vs. una sola llamada LLM optimizada), ni guías de FinOps específicas para IA agéntica.
+
+### 6.6 Brecha de seguridad ofensiva / red-teaming específico de agentes de procurement
+
+🟡 **BRECHA CONFIRMADA**: se mencionan guardrails genéricos (toxicidad, PII, invariantes de sistema) y "scenario generators" para casos adversariales (sección 3.11), pero no hay ninguna mención de vectores de ataque específicos a agentes de procurement (ej. prompt injection vía documentos de proveedores maliciosos, manipulación de RFx, envenenamiento de bases de datos de proveedores) ni casos de red-teaming documentados en este dominio.
+
+### 6.7 Brecha de comparación cuantitativa entre frameworks de orquestación
+
+🟡 **BRECHA CONFIRMADA**: McKinsey nombra frameworks (LangChain, LangGraph, AutoGen, CrewAI, Google ADK, Agentspace) en 2-3 fuentes distintas de forma consistente, pero nunca publica una comparación técnica entre ellos (rendimiento, madurez, curva de aprendizaje, criterios de selección) — solo los menciona como opciones intercambiables bajo el paraguas de "neutralidad de proveedores." Tampoco explica por qué ARK (su propio proyecto open-source) no aparece mencionado en los artículos ejecutivos como una opción — sugiere una desconexión entre la comunicación de QuantumBlack Labs/ingeniería (GitHub) y McKinsey Digital/Technology (reportes PDF ejecutivos).
+
+### 6.8 Brecha de metodología de medición de impacto
+
+🟡 **BRECHA CONFIRMADA (transversal a todos los casos citados)**: absolutamente ningún caso de uso citado en ninguna fuente (procurement, banca, telco, seguros, aeroespacial) incluye metodología pública de cómo se midió el impacto (líneas base, período de medición, tamaño de muestra, si es proyectado vs. realizado). Todas las cifras de impacto deben tratarse como 🟡 afirmaciones del vendor, no como hechos verificados independientemente. Esto aplica en particular a los 5 casos de procurement de la sección 5.4 y a la cifra "25-40% de eficiencia" citada en el artículo de octubre 2025.
+
+### 6.9 Brecha de "agentic commerce" vs. procurement B2B — dominios relacionados pero no integrados
+
+🔵 **INFERENCIA DEL AGENTE**: McKinsey publicó también *The agentic commerce opportunity* (QuantumBlack, oct. 2025) sobre agentes de compra en retail B2C — no fue objeto de fetch profundo en esta investigación por estar fuera del alcance de procurement B2B/empresarial, pero es una brecha de seguimiento: no queda claro en las fuentes revisadas si McKinsey traza explícitamente paralelismos técnicos entre "agentic commerce" (compra B2C) y "agentic procurement" (compra B2B) — parecen tratarse como líneas de producto/investigación separadas dentro de QuantumBlack.
+
+### 6.10 Resumen de la brecha más importante para el proyecto
+
+🔵 **INFERENCIA DEL AGENTE — SÍNTESIS FINAL**: la brecha más significativa para el diseño de nuestro propio harness es que **la arquitectura técnica detallada (mesh, ARK, evals, capas) y los casos de uso de procurement (sección 5) viven en documentos/fuentes separados que nunca se cruzan explícitamente**. Ningún artículo de McKinsey aplica el detalle arquitectónico del mesh/ARK/evals directamente a un caso de procurement paso a paso. Esto significa que el trabajo de "traducir" la arquitectura genérica de McKinsey a un diseño concreto de agentes de procurement (qué agentes, qué herramientas MCP, qué esquema de datos del "procurement data spine", qué evals específicas para RFx/negociación/cumplimiento) es trabajo que nuestro propio equipo debe hacer — McKinsey no lo ha publicado integrado en ninguna fuente encontrada.
 
 ---
 
 ## Fuentes consultadas (bitácora)
 
-| # | URL | Resultado |
-|---|-----|-----------|
+| # | Título | Organización/Autores | Fecha | URL | Resultado |
+|---|--------|----------------------|-------|-----|-----------|
+| 1 | Why agents are the next frontier of generative AI | McKinsey Digital — Yee, Chui, Roberts, Xu | 2024-07-24 | https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/why-agents-are-the-next-frontier-of-generative-ai | Fetch exitoso — artículo fundacional, patrón manager/subagente |
+| 2 | Seizing the agentic AI advantage | QuantumBlack — Sukharevsky, Kerr, Hjartar et al. | 2025-06-13 | https://www.mckinsey.com/capabilities/quantumblack/our-insights/seizing-the-agentic-ai-advantage | Fetch exitoso — definición de mesh, 7 capacidades, modelos, build vs buy |
+| 3 | How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh | QuantumBlack Medium — Dave Kerr et al. | 2025-06-12 | https://medium.com/quantumblack/how-we-enabled-agents-at-scale-in-the-enterprise-with-the-agentic-ai-mesh-baf4290daf48 | Fetch exitoso — fuente técnica más profunda: frameworks, protocolos, capas |
+| 4 | One year of agentic AI: Six lessons from the people doing the work | QuantumBlack — Yee, Chui, Roberts, Xu | 2025-09-12 | https://www.mckinsey.com/capabilities/quantumblack/our-insights/one-year-of-agentic-ai-six-lessons-from-the-people-doing-the-work | Fetch exitoso — 6 lecciones, tipos de evals, tabla de decisión agente vs. no-agente |
+| 5 | The agentic organization: Contours of the next paradigm for the AI era | People & Org. Performance — Sukharevsky et al. (8 autores) | 2025-09-26 | https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-agentic-organization-contours-of-the-next-paradigm-for-the-ai-era | Fetch exitoso — "agent factory" 50-100 agentes, gobernanza, casos bancarios |
+| 6 | Transforming procurement for an AI-driven world | Operations — Schmidt, Samuels, Khushalani et al. | 2025-10-27 | https://www.mckinsey.com/capabilities/operations/our-insights/transforming-procurement-functions-for-an-ai-driven-world | Fetch exitoso (limitado) — definición de agentes de procurement, caso farma $10M |
+| 7 | Building the foundations for agentic AI at scale | McKinsey Technology | fecha exacta no confirmada (~2025-2026) | https://www.mckinsey.com/capabilities/mckinsey-technology/our-insights/building-the-foundations-for-agentic-ai-at-scale | Búsqueda web — capa de datos, 2 arquetipos, gobernanza embebida en pipelines |
+| 8 | Redefining procurement performance in the era of agentic AI | Operations — Mittal, Belotserkovskiy, Liakopoulou | 2026-02-05 | https://www.mckinsey.com/capabilities/operations/our-insights/redefining-procurement-performance-in-the-era-of-agentic-ai | Fetch exitoso — FUENTE CLAVE de procurement: 5 casos, data spine, no-regret agents |
+| 9 | Rethinking enterprise architecture for the agentic era | McKinsey Technology — Jensen, Bauer, Vinter, Vora | 2026-03-12 | https://www.mckinsey.com/capabilities/mckinsey-technology/our-insights/rethinking-enterprise-architecture-for-the-agentic-era | Fetch exitoso — metáfora "sistema nervioso", caso asegurador |
+| 10 | Reimagining tech infrastructure for and with agentic AI | McKinsey Technology — Tournesac, Gundurao, Lau, Sachdeva | 2026-04-23 | https://www.mckinsey.com/capabilities/mckinsey-technology/our-insights/reimagining-tech-infrastructure-for-and-with-agentic-ai | Fetch exitoso — 3 capas, caso IT incident response, 90 días de CTO |
+| 11 | Evaluations for the agentic world | QuantumBlack Medium — Starkloff, Kokaina, Rahimi | 2026-01-29 | https://medium.com/quantumblack/evaluations-for-the-agentic-world-c3c150f0dd5a | Fetch exitoso — FUENTE CLAVE de evals: 3 niveles, modos de fallo, casos banco/telco |
+| 12 | ARK — Agentic Runtime for Kubernetes (repositorio + docs) | McKinsey/QuantumBlack (GitHub) | activo, consultado 2026-07-01 | https://github.com/mckinsey/agents-at-scale-ark ; https://mckinsey.github.io/agents-at-scale-ark/ | Fetch exitoso — FUENTE CLAVE: código real open-source, CRDs K8s, MCP/A2A |
+| 13 | Generative AI workflows need engineering discipline to scale beyond the demo | QuantumBlack Medium | 2026-05 (mes exacto no confirmado, día no confirmado) | https://medium.com/quantumblack/generative-ai-workflows-need-engineering-discipline-to-scale-beyond-the-demo-a9928135e393 | Búsqueda web únicamente (no fetch profundo) — relaciona Kedro con disciplina de ingeniería agéntica |
+| 14 | The agentic commerce opportunity: How AI agents are ushering in a new era for consumers and merchants | QuantumBlack | 2025-10 | https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-agentic-commerce-opportunity-how-ai-agents-are-ushering-in-a-new-era-for-consumers-and-merchants | Solo identificada por título — NO consultada en profundidad (fuera de alcance B2B, ver brecha 6.9) |
+
+**Nota metodológica**: los intentos de descargar directamente los PDFs oficiales de McKinsey (ej. *why-agents-are-the-next-frontier-of-generative-ai.pdf*) fallaron por contenido binario no decodificable vía WebFetch; en su lugar se usaron las versiones HTML equivalentes en mckinsey.com, que sí se pudieron procesar exitosamente.
+
+---
+
+## Estado final: INVESTIGACIÓN COMPLETA (primera pasada)
+
+Se cubrieron los 5 puntos del alcance original: (1) agentic mesh — sección 1 y 3.10; (2) artículos técnicos clave — sección 2 (6 artículos + 1 repositorio de código); (3) patrones concretos (orquestador-trabajadores, HITL, memoria, evals, guardrails, observabilidad/AgentOps) — sección 3; (4) stack tecnológico y build vs. buy — sección 4; (5) procurement/supply chain específico — sección 5. Brechas documentadas explícitamente en sección 6 (10 brechas identificadas).
