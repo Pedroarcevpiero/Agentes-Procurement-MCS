@@ -201,7 +201,59 @@ No se encontró ningún artículo, nota de prensa o caso de cliente de McKinsey 
 
 ## 4. Benchmark de contexto: BCG, Bain, Accenture y vendors nativos de procurement AI
 
-_(pendiente de investigación)_
+_(Sección breve, ~20% del esfuerzo, solo para contrastar el enfoque de McKinsey — no se profundiza tanto como en las secciones 1-3.)_
+
+### 4.1 BCG
+
+**HECHO VERIFICADO:** BCG cuantifica una oportunidad de 200,000 millones USD ("$200 billion") de demanda neta nueva para proveedores de servicios tecnológicos, específicamente para integrar agentes en sistemas legacy (ERP, CRM). Recomienda a los proveedores combinar soluciones "full-stack ancladas en industria" con "soluciones agénticas horizontales", y enfatiza "vender impacto probado, no promesas" (ROI medible como diferenciador de venta).
+- Fuente: BCG. (2026). *The $200 Billion Agentic AI Opportunity for Tech Service Providers*. https://www.bcg.com/publications/2026/the-200-billion-dollar-ai-opportunity-in-tech-services — fecha de acceso: 2026-07-01.
+
+**Sobre procurement específicamente (AFIRMACIÓN DEL VENDOR):** BCG reporta que capacidades de IA/GenAI ya se despliegan a lo largo de la cadena de valor de procurement, con ahorros de hasta 15% dependiendo de la categoría, requiriendo solo 70% de la capacidad de los compradores.
+- Fuente: BCG. (2025, 27 de febrero). *Executive Perspectives: Future of Procurement with AI*. https://www.bcg.com/assets/2025/executive-perspectives-future-of-procurement-with-ai-27feb.pdf — fecha de acceso: 2026-07-01. (Nota: esta fuente es de febrero de 2025, dentro de la ventana de 24 meses pero anterior al grueso de la investigación de McKinsey de 2026 — útil como comparación temporal.)
+- BCG también publicó "How AI Agents Are Transforming Supply Chains" (2026) y "Supply Chain Planning 2026: Why AI Alone Isn't Enough" — ambos relevantes tangencialmente a procurement pero centrados en supply chain planning más que en sourcing/compras.
+
+### 4.2 Bain
+
+**HECHO VERIFICADO:** Bain & Company se enfoca predominantemente en **agentic commerce** (B2C/retail) más que en procurement B2B puro: pronostica un mercado de comercio agéntico en EE.UU. de 300,000-500,000 millones USD para 2030 (15-25% de las ventas de e-commerce), y advierte a los retailers que deben servir tanto a clientes humanos como a "agentes de IA cliente".
+- Fuente: Stellagent (resumen de investigación de Bain). *Bain & Company Forecasts "Up to $500 Billion by 2030" for Agentic Commerce*. https://stellagent.ai/insights/bain-agentic-ai-retail-2030-forecast — fecha de acceso: 2026-07-01. (Fuente secundaria — se recomienda verificar contra bain.com directamente si se cita en el reporte final.)
+- **BRECHA:** No se encontró en esta ronda de búsqueda un informe de Bain centrado específicamente en agentic AI para procurement B2B (a diferencia de McKinsey y BCG, que sí tienen piezas dedicadas). Bain parece estar más enfocado en el lado de venta/comercio que en el lado de compra/procurement.
+
+### 4.3 Accenture
+
+**HECHO VERIFICADO:** Accenture ha construido una oferta agéntica horizontal robusta a través de su plataforma **"AI Refinery"**, con "AI Refinery for Industry" (lanzado en 2025) que incluye 12 soluciones de agentes por industria y un "AI agent builder" para que usuarios de negocio construyan/personalicen agentes. Accenture también anunció en 2026 un programa de "Forward Deployed Engineering" (FDE) con **ServiceNow** para escalar IA agéntica de piloto a producción, y fue reconocida como una de cinco "SaaS Stars" en servicios agénticos.
+- Fuente: Accenture Newsroom. (2025). *Accenture Expands AI Refinery and Launches New Industry Agent Solutions to Accelerate Agentic AI Adoption*. https://newsroom.accenture.com/news/2025/accenture-expands-ai-refinery-and-launches-new-industry-agent-solutions-to-accelerate-agentic-ai-adoption — fecha de acceso: 2026-07-01.
+- Fuente: Accenture Newsroom. (2026). *ServiceNow and Accenture Launch Forward Deployed Engineering Program to Scale Agentic AI Across the Enterprise*. https://newsroom.accenture.com/news/2026/servicenow-and-accenture-launch-forward-deployed-engineering-program-to-scale-agentic-ai-across-the-enterprise — fecha de acceso: 2026-07-01.
+- Accenture también tiene un caso de estudio publicado sobre SAP Ariba: *Revolutionizing procurement with SAP Ariba*. https://www.accenture.com/us-en/case-studies/about/journey-intelligent-procurement-sap-ariba — fecha de acceso: 2026-07-01. (No se verificó fecha ni si incluye componente agéntico explícito — pendiente de revisión más profunda si el equipo lo requiere.)
+- Recordar de sección 1.3: Accenture es, junto con PwC, uno de los partners de consultoría con la alianza de marca MÁS profunda con Anthropic/Claude (Accenture Anthropic Business Group, ~30,000 profesionales), lo cual la distingue claramente de McKinsey en términos de apuesta tecnológica.
+
+### 4.4 Vendors nativos de procurement AI (comparación rápida)
+
+| Vendor | Producto/enfoque agéntico | Dato clave verificado o afirmado |
+|---|---|---|
+| **GEP** | GEP Quantum Intelligence (plataforma AI-native) | Elimina cuellos de botella, simplifica compras, mejora adopción/cumplimiento (afirmación del vendor). |
+| **Zycus** | Merlin Intake, Autonomous Negotiation Agent (ANA), Merlin Analytics | Se autodenomina "pionero global de IA agéntica en procurement"; organizó la "Agentic AI Procurement Summit 2026" (13 de mayo de 2026, >1,500 líderes de compras de 50+ países), donde se lanzaron investigaciones de Forrester ("Don't Delegate AI") y The Hackett Group ("Agentic AI in Procurement Adoption Index 2026", basado en 250+ CPOs). |
+| **Globality** | "Glo" — agente de IA conversacional para RFPs/sourcing autónomo | Afirma haber reducido el ciclo de RFP de Bristol Myers Squibb de 6 meses a 27 días (10x más eventos de sourcing sin añadir headcount). Liderada por Joel Hyatt. Clientes citados: Fidelity, Santander, BT, Tesco, IQVIA, T. Rowe Price, Invesco, HP, Dropbox, Allegis. Levantó 47 millones USD en octubre de 2024. |
+| **Keelvar** | Optimización de sourcing/subastas | Posicionado como especialista de nicho en "sourcing optimisation" (según Procurement Magazine/Hackett). |
+| **Arkestro** | Predictive procurement orchestration | Mencionado junto a Zip, Aera y Pactum como plataforma "AI-native" que ataca cuellos de botella específicos del ciclo de procurement. |
+| **LevaData** | Sourcing directo de materiales e inteligencia de supply chain | Combina datos de mercado en tiempo real, benchmarks de precios, desempeño de proveedores y analítica predictiva; enfocada en materiales directos (manufactura). |
+| **Zip** | Intake/orchestration | Mencionado como plataforma AI-native que resuelve cuellos de botella específicos (no se profundizó por estar fuera del foco principal). |
+
+- Fuente principal para esta tabla: Procurement Magazine / CPOstrategy. *Zycus concludes Agentic AI Procurement Summit 2026 with a mandate for CPO-led AI ownership*. https://cpostrategy.media/blog/2026/05/22/zycus-concludes-agentic-ai-procurement-summit-2026-with-a-mandate-for-cpo-led-ai-ownership/ — fecha de acceso: 2026-07-01.
+- Fuente: Businesswire. (2024, 22 de octubre). *Globality Raises $47 Million to Accelerate Growth of Its Industry-Leading AI-Powered Autonomous Sourcing Software*. https://www.businesswire.com/news/home/20241022916716/en/Globality-Raises-$47-Million-to-Accelerate-Growth-of-Its-Industry-Leading-AI-Powered-Autonomous-Sourcing-Software — fecha de acceso: 2026-07-01.
+- Fuente: GEP. https://www.gep.com/ y https://www.gep.com/blog/technology/agentic-ai-orchestration-enterprise-procurement-guide — fecha de acceso: 2026-07-01.
+
+**Dato de adopción general (AFIRMACIÓN, fuente Hackett/Zycus summit):** 58% de los líderes de procurement esperan que la IA agéntica tenga un impacto material en sus organizaciones dentro de doce meses, pero la mayor parte del trabajo permanece "varado" en modo piloto — cifra consistente con el hallazgo de McKinsey (23% logra escalar vs. 62% en piloto/experimentación, ver sección 2.1).
+
+### 4.5 Contraste McKinsey vs. el resto (síntesis del benchmark)
+
+**INFERENCIA (marcada), basada en los patrones observados:**
+- **McKinsey**: postura de asesor estratégico "agnóstico" — no promueve una suite de procurement ni un LLM único; su pieza insignia de procurement agéntico (sección 3.1) es deliberadamente neutral en tecnología, enfocada en arquitectura de "equipos de agentes" y transformación organizacional/de datos.
+- **BCG**: enfoque similar de asesoría agnóstica, pero con más cuantificación de mercado (TAM de $200B) dirigida a proveedores de tecnología, no solo a compradores empresariales.
+- **Bain**: enfoque desplazado hacia el lado de venta/comercio agéntico (B2C), con menor presencia visible en procurement B2B específicamente.
+- **Accenture**: a diferencia de las MBB, apuesta explícitamente por un stack tecnológico de marca (Anthropic/Claude vía Accenture Anthropic Business Group) y por plataforma propia (AI Refinery), combinando consultoría con producto/IP propietario y alianzas de implementación (ServiceNow).
+- **Vendors nativos (GEP, Zycus, Globality, Keelvar, Arkestro, LevaData, Zip)**: construyen producto propio con agentes nombrados y métricas de cliente específicas (p. ej. Globality/BMS: 6 meses a 27 días), en contraste con las consultoras que hablan en términos de "playbooks" y transformación organizacional sin nombrar producto propio equivalente.
+
+**Implicación para el diseño propio del equipo:** Ningún actor grande (McKinsey, BCG, Bain) ha publicado una arquitectura técnica detallada y nombrada (con LLM y protocolos específicos) para agentes de procurement B2B — esto es tanto una brecha de mercado como una oportunidad, ya que sugiere que la ventaja competitiva está más en la ejecución técnica específica (elección de LLM, uso de MCP/A2A, integración con la suite de procurement del cliente) que en la estrategia general, que ya está bien cubierta por las consultoras.
 
 ---
 
