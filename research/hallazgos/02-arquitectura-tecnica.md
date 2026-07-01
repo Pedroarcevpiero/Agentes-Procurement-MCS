@@ -109,7 +109,70 @@ Fuente: *Rethinking enterprise architecture for the agentic era*, McKinsey Techn
 
 Ya cubierto en profundidad en secciones 1.1-1.5 (definición de mesh, 7 capacidades) y 4.3-4.4 (modelos, build vs. buy).
 
-### 2.3 "How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh" (QuantumBlack Medium, jun. 2025) — LA FUENTE TÉCNICA MÁS PROFUNDA ENCONTRADA
+### 2.4 "The agentic organization: Contours of the next paradigm for the AI era" (People & Org. Performance, sep. 2025)
+
+🟢 **HECHO VERIFICADO** — Fuente: *The agentic organization: Contours of the next paradigm for the AI era*, McKinsey People & Organizational Performance, Alexander Sukharevsky, Alexis Krivkovich, Arne Gast, Arsen Storozhev, Dana Maor, Deepak Mahadevan, Lari Hämäläinen, Sandra Durth, 26 de septiembre de 2025. URL: https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-agentic-organization-contours-of-the-next-paradigm-for-the-ai-era (acceso 2026-07-01). Este artículo es predominantemente organizacional, pero contiene hallazgos técnicos relevantes.
+
+**"Agent factory" — la cifra de supervisión humana más citada de McKinsey**: "a human team of two to five people can already supervise an agent factory of 50 to 100 specialized agents running an end-to-end process such as onboarding a customer, launching a product, or closing the books." 🟡 (marcado como afirmación del vendor — no se detalla metodología de cómo se llegó a este rango 50-100).
+
+**Caso bancario documentado**: un banco global opera un "agent factory" que gestiona procesos KYC ("know your customer") mediante "ten agent squads", con "substantial positive impact on the quality and consistency of output." Otro banco usó humanos supervisando "squads of AI agents" para modernizar sistemas legacy, logrando "up to 50 percent reductions in time and effort" (misma cifra que aparece en el reporte de junio 2025 de QuantumBlack para un "banco de legado" — 🔵 inferencia del agente: probablemente es el mismo caso citado en dos artículos distintos).
+
+**Gobernanza distribuida mediante agentes especializados de control** (patrón recurrente en todas las fuentes): "Critic agents will challenge outputs, guardrail agents will enforce policy, and compliance agents will monitor regulation." Con trazabilidad: "Every action can be logged and explained in real time—from data privacy to financial thresholds to brand voice."
+
+**Framework de gobernanza de ciclo de vida**: cubre descubrimiento de agentes, iniciación (onboarding) y desmantelamiento (decommissioning) — balanceando "speed and scale with the required security and control mechanisms."
+
+**Protocolos agent-to-agent como alternativa a integraciones tradicionales**: "Agent-to-agent protocols enable systems to use agents to communicate with other systems", evitando dependencia de middleware/APIs tradicionales que requieren "heavy programming and custom system-to-system connections", permitiendo "faster experimentation—in which new capabilities can be tested, scaled, or deprecated without months of engineering effort."
+
+**Democratización de desarrollo de software**: "business-side employees will be able to independently create software assets and manage data through agentic AI, which automates the software development life cycle (SDLC) with oversight from deep specialists." Cifra citada (🟡 afirmación del vendor, ejemplo anecdótico): "productivity at least double, with employees from diverse backgrounds—such as a French literature graduate in one of our teams—proving as capable as software engineers in building agentic workflows."
+
+**Advertencia explícita contra lock-in de vendor**: "locking in one solution or vendor can lead to technology that is outdated in a matter of weeks", dada la velocidad de evolución de LLMs. Principio arquitectónico recomendado: separar "agentic structure, logic, and data from the underlying vendor landscape" — mismo principio ya visto en el blog técnico (sección 3.10.5).
+
+**Brecha confirmada**: este artículo NO contiene detalle específico de procurement/supply chain. Únicas menciones tangenciales: "different outcomes may be sourced from different parties, opening up new B2B opportunities" y que "agentic networks are not necessarily limited to the boundaries of a single organization" (redes de agentes inter-organizacionales, relevante conceptualmente para sourcing con proveedores pero sin desarrollo).
+
+### 2.5 "Building the foundations for agentic AI at scale" (McKinsey Technology) — la capa de datos
+
+🟢 **HECHO VERIFICADO** — Fuente: *Building the foundations for agentic AI at scale*, McKinsey Technology. URL: https://www.mckinsey.com/capabilities/mckinsey-technology/our-insights/building-the-foundations-for-agentic-ai-at-scale (acceso 2026-07-01; fecha de publicación exacta no confirmada en el fetch — pendiente verificación adicional, aparece indexado junto a los artículos de 2025-2026 de McKinsey Technology).
+
+**Diagnóstico cuantitativo del problema de datos** (🟡 afirmación del vendor, sin metodología detallada): "Eight in ten companies cite data limitations as a roadblock to scaling agentic AI."
+
+**Dos arquetipos agénticos que requieren arquitecturas de datos distintas**: "single-agent workflows and multi-agent workflows, both of which require consistent, interoperable data, without which agents could break down."
+
+**Gobernanza de datos no estructurados "en movimiento"**: "Unstructured data is continuously ingested, transformed, and recombined as it flows into models, which means governance must travel with it, and data quality checks, security controls, and lineage tracking need to be automated and embedded directly into the pipelines." 🔵 **INFERENCIA DEL AGENTE**: esto es consistente con — y proporciona el fundamento de — el concepto de "procurement data spine" (sección 5.5): la gobernanza de datos no es un paso previo separado, sino que debe estar embebida en los propios pipelines de datos que alimentan a los agentes.
+
+**Recomendación de acción**: "tech leaders can agentify high-impact workflows, modernize data architectures, enforce data quality, and evolve operating models to capture value from agentic AI."
+
+### 2.6 Repositorio open-source: ARK (Agentic Runtime for Kubernetes) — CÓDIGO REAL, no solo mensaje ejecutivo
+
+🟢 **HECHO VERIFICADO** — Esta es la fuente MÁS técnica y accionable de toda la investigación: un repositorio de código abierto real y funcional publicado por McKinsey/QuantumBlack.
+
+- **Repositorio**: https://github.com/mckinsey/agents-at-scale-ark (acceso 2026-07-01)
+- **Documentación**: https://mckinsey.github.io/agents-at-scale-ark/
+- **Descripción oficial**: "A declarative, Kubernetes-native framework for building portable, scalable, and provider-agnostic agentic applications." También descrito como: "Provider-agnostic operations for agentic resources. ARK codifies patterns and practices developed across dozens of agentic application projects."
+- **Madurez del proyecto** (al momento de acceso): 49 releases publicados, 400+ estrellas en GitHub, 94 forks, 321 issues abiertos, 67 pull requests en revisión, CI/CD con GitHub Actions, cobertura de código vía Codecov, análisis de calidad vía SonarQube — es decir, es un proyecto de ingeniería activo y con prácticas de mantenimiento serias, no un demo abandonado.
+
+**Qué es técnicamente**: ARK extiende Kubernetes con Custom Resource Definitions (CRDs) y servicios para construir y ejecutar cargas de trabajo agénticas — análogo a cómo Argo extiende Kubernetes para workflows genéricos, pero especializado en agentes de IA. Explícitamente aclarado: **"It is not a Python library, but a complete runtime platform."**
+
+**Componentes/recursos declarativos que expone**:
+- Configuraciones de modelos de IA (gestión de proveedores/LLMs — agnóstico: OpenAI, Anthropic, Google, Azure, Ollama local, sin cambios de código al intercambiar proveedor).
+- Definición de agentes individuales (prompts, tools, referencia a modelo — como recursos Kubernetes/CRDs).
+- Equipos multi-agente con estrategias de orquestación: **ejecución secuencial, workflows basados en grafos, enrutamiento por selector ("team-selector-strategy"), distribución round-robin.**
+- Integración de herramientas vía HTTP APIs, servidores MCP, u otros agentes.
+- Sistemas de memoria: contexto de conversación persistente vía backends conectables (pluggable).
+- Soporte de protocolo **A2A** para interoperabilidad con sistemas externos.
+
+**Stack tecnológico del propio repositorio**: TypeScript (53.8%), Go (21.6%), Python (20.6%). Incluye CLI, SDK de Python, SDK de TypeScript, y dashboard web.
+
+**Instalación** (documentada, reproducible): `npm install -g @agents-at-scale/ark`, luego `ark install` (instala dependencias, controlador, APIs y dashboard), opcionalmente `ark models create default` y `ark dashboard`.
+
+**Estructura del repositorio**: `/ark` (framework core), `/services` (microservicios), `/lib` (librerías compartidas), `/examples` (namespaces de demo y configuraciones de muestra), `/infrastructure` (manifiestos de despliegue K8s), `/charts` (Helm charts), `/tools` (CLI/utilidades), `/docs` (guías y documentación de API).
+
+**Filosofía de diseño explícita**: prioriza "visibilidad y transparencia a través de todo el stack" — desde abstracciones de alto nivel hasta componentes de infraestructura — permitiendo a equipos de desarrollo y operaciones mantener visión completa del comportamiento del sistema agéntico y los mecanismos de despliegue. Se contrasta explícitamente con plataformas de agentes propietarias, enfatizando acceso democrático, auditabilidad, y capacidad de migrar workloads individuales a sistemas especializados cuando surgen requisitos específicos — sin sobrecarga de migración significativa.
+
+🔵 **INFERENCIA DEL AGENTE — MUY RELEVANTE PARA NUESTRO DISEÑO**: ARK es, en la práctica, la implementación de referencia (aunque genérica, no sectorial) de TODOS los principios descritos en los artículos ejecutivos de McKinsey (agentic AI mesh, composabilidad, neutralidad de proveedor, autonomía gobernada, observabilidad, AI Asset Registry). Es decir: los conceptos de "mesh" de los reportes PDF de McKinsey (secciones 1, 3, 4 de este documento) tienen una encarnación técnica pública y descargable en este repositorio. Para nuestro propio harness de procurement, ARK es candidato directo a evaluación como base de orquestación (Kubernetes-native, multi-LLM-provider, soporta MCP y A2A, con CRDs declarativos para definir agentes/equipos) en lugar de construir el control plane desde cero. **No confirmado en las fuentes si ARK tiene algún ejemplo o template específico de procurement** — los ejemplos documentados son genéricos ("demo namespaces"), no hay mención a supply chain/sourcing en la documentación revisada.
+
+**Brecha**: no se pudo acceder al código fuente línea por línea (los fetches devolvieron resúmenes generados, no el raw README completo) — para una evaluación de adopción real, un equipo técnico debería clonar el repo y revisar los CRDs y ejemplos directamente en `/examples`.
+
+### 2.3 "How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh" (QuantumBlack Medium, jun. 2025) — LA FUENTE TÉCNICA MÁS PROFUNDA (documentación conceptual)
 
 🟢 **HECHO VERIFICADO** — Fuente: *How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh*, blog de QuantumBlack (AI by McKinsey) en Medium, autor principal Dave Kerr (con colaboradores), 12 de junio de 2025. URL: https://medium.com/quantumblack/how-we-enabled-agents-at-scale-in-the-enterprise-with-the-agentic-ai-mesh-baf4290daf48 (acceso 2026-07-01).
 

@@ -4,7 +4,7 @@
 
 **Ventana temporal:** julio 2024 – julio 2026 (hoy: 2026-07-01)
 
-**Estado:** EN PROGRESO — documento vivo, actualizado incrementalmente.
+**Estado:** COMPLETO (investigación cerrada el 2026-07-01; ver sección de brechas para líneas de seguimiento pendientes).
 
 ---
 
@@ -257,12 +257,69 @@ _(Sección breve, ~20% del esfuerzo, solo para contrastar el enfoque de McKinsey
 
 ---
 
-## Brechas de información identificadas
+## Brechas de información identificadas (consolidado)
 
-_(se documentarán a medida que se identifiquen)_
+1. **No existe alianza McKinsey–Anthropic verificable.** El brief original del proyecto asumía esta alianza (anunciada supuestamente en diciembre de 2025); la investigación exhaustiva no encontró evidencia de ella. En su lugar, Anthropic se ha posicionado como competidor directo de McKinsey vía su joint venture de mayo de 2026 con Blackstone/Goldman Sachs/H&F ("McKinsey of AI"). **Recomendación:** el equipo de síntesis debe corregir esta premisa en el informe final y explicar el hallazgo real (McKinsey es multi-vendor/agnóstica; Anthropic ha priorizado a Accenture, PwC, y presuntamente Deloitte/KPMG como partners de consultoría, no a McKinsey).
+2. **El único punto de contacto documentado entre McKinsey y Anthropic/MCP** es el informe de agentic commerce de McKinsey/QuantumBlack (17 oct. 2025), que menciona a Anthropic como creador de MCP en un contexto de protocolos de interoperabilidad — pero el informe es sobre comercio B2C, no procurement B2B, y no constituye una alianza.
+3. **No se encontró ninguna integración anunciada conjuntamente entre McKinsey y una suite específica de procurement** (SAP Ariba, Coupa, Ivalua, Jaggaer, Zip). Cada vendor de procurement anuncia sus propias capacidades agénticas de forma independiente.
+4. **La relación exacta entre McKinsey y SAP en el contexto específico de Ariba** no se verificó a fondo (McKinsey tiene alianzas generales con SAP fuera del alcance de esta búsqueda específica) — pendiente si el equipo lo requiere.
+5. **Las cifras de eficiencia agregadas (15-30%, 25-40%, 75% reducción RFP)** citadas por fuentes secundarias sobre la investigación de McKinsey en procurement agéntico no se pudieron confirmar palabra por palabra en el artículo original vía WebFetch (que mostró casos anonimizados con cifras distintas, más granulares). Se recomienda que quien redacte el informe final intente acceder al PDF original o a la versión cacheada completa del artículo de McKinsey (5 feb. 2026) para verificar cifras exactas antes de citarlas como HECHO VERIFICADO.
+6. **Zip y su relación con McKinsey:** no se encontró evidencia de partnership directo. Zip aparece solo mencionado tangencialmente en listados de vendors.
+7. **Bain en procurement B2B específico:** no se encontró pieza de investigación dedicada de Bain sobre agentic AI en procurement (a diferencia de McKinsey y BCG); Bain está más volcada a agentic commerce B2C/retail.
+8. **Deloitte y KPMG como partners de Anthropic:** esta afirmación proviene de una fuente secundaria (IntuitionLabs) y no fue verificada contra newsroom oficial de Deloitte o KPMG — requiere verificación adicional si se va a citar como HECHO VERIFICADO en el informe final.
+9. **No se profundizó** en Mistral AI ni Cohere como partners directos de McKinsey más allá de la mención de Cohere en Lilli (fuentes secundarias). No se encontró evidencia de relación de McKinsey con Mistral AI.
+10. **Fecha exacta de publicación** del artículo "McKinsey and Microsoft drive business value creation with gen AI agents enabled by Copilot Studio" no se confirmó con precisión (WebFetch no la extrajo) — pendiente de verificación si se cita en APA.
 
 ---
 
 ## Registro de fuentes consultadas
 
-_(lista acumulativa)_
+### Fuentes primarias — McKinsey
+- McKinsey & Company. (2024, 25 de noviembre). *What McKinsey learned while creating its generative AI platform*. https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/what-mckinsey-learned-while-creating-its-generative-ai-platform
+- McKinsey & Company. *Meet Lilli, our generative AI tool that's a researcher, a time saver, and an inspiration*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/meet-lilli-our-generative-ai-tool
+- McKinsey & Company. *Rewiring the way McKinsey works with Lilli, our generative AI platform*. https://www.mckinsey.com/capabilities/tech-and-ai/how-we-help-clients/rewiring-the-way-mckinsey-works-with-lilli
+- McKinsey & Company. (2026, 23 de febrero). *McKinsey and OpenAI scale AI-driven transformations with new Frontier Alliance*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-and-openai-scale-ai-driven-transformations-with-new-frontier-alliance
+- McKinsey & Company. *Nvidia & McKinsey* (página de alianza). https://www.mckinsey.com/about-us/overview/alliances/nvidia-and-mckinsey
+- McKinsey & Company. (2026, 22 de abril). *McKinsey and Google Cloud Launch the McKinsey Google Transformation Group*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-and-google-cloud-launch-the-mckinsey-google-transformation-group-to-scale-enterprise-impact-for-the-ai-era
+- McKinsey & Company. *McKinsey and Google Cloud help companies tap into $4 trillion of business value with generative AI* (2023, contexto histórico). https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-and-google-cloud-partner-to-help-industry-leaders-tap-into-4-trillion-of-business-value-with-generative-ai
+- McKinsey & Company. (2026, 22 de enero). *McKinsey and AWS launch Amazon McKinsey Group*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-and-amazon-launch-amazon-mckinsey-group
+- McKinsey & Company. *Salesforce & McKinsey* (página de alianza). https://www.mckinsey.com/about-us/overview/alliances-and-acquisitions/salesforce-and-mckinsey
+- McKinsey & Company. *McKinsey at Dreamforce: delivering on the promise of AI and tech*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-at-dreamforce-delivering-on-the-promise-of-ai-and-tech
+- McKinsey & Company. *McKinsey and Microsoft drive business value creation with gen AI agents enabled by Copilot Studio*. https://www.mckinsey.com/about-us/new-at-mckinsey-blog/mckinsey-expands-alliance-with-microsoft-to-scale-copilot-solutions-across-enterprises
+- McKinsey & Company. (2026, 5 de febrero). *Redefining procurement performance in the era of agentic AI*. https://www.mckinsey.com/capabilities/operations/our-insights/redefining-procurement-performance-in-the-era-of-agentic-ai
+- McKinsey & Company / QuantumBlack. (2025, 17 de octubre). *The agentic commerce opportunity: How AI agents are ushering in a new era for consumers and merchants*. https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-agentic-commerce-opportunity-how-ai-agents-are-ushering-in-a-new-era-for-consumers-and-merchants
+- McKinsey & Company. *Product Development & Procurement Consulting*. https://www.mckinsey.com/capabilities/operations/how-we-help-clients/product-development-procurement
+
+### Fuentes primarias — partners tecnológicos
+- Anthropic. (2026, 4 de mayo). *Building a new enterprise AI services company with Blackstone, Hellman & Friedman, and Goldman Sachs*. https://www.anthropic.com/news/enterprise-ai-services-company
+- Blackstone. (2026, 4 de mayo). *Anthropic Partners with Blackstone, Hellman & Friedman, and Goldman Sachs to Launch Enterprise AI Services Firm*. https://www.blackstone.com/news/press/anthropic-partners-with-blackstone-hellman-friedman-and-goldman-sachs-to-launch-enterprise-ai-services-firm/
+- Accenture Newsroom. (2025, diciembre). *Accenture and Anthropic Launch Multi-Year Partnership*. https://newsroom.accenture.com/news/2025/accenture-and-anthropic-launch-multi-year-partnership-to-drive-enterprise-ai-innovation-and-value-across-industries
+- PwC. *PwC and Anthropic expand alliance for enterprise agentic AI*. https://www.pwc.com/us/en/about-us/newsroom/press-releases/anthropic-pwc-expand-alliance-agentic-enterprise.html
+- SAP News. (2026, marzo). *Next‑Gen SAP Ariba Is Here*. https://news.sap.com/2026/03/next-gen-sap-ariba-foundation-for-intelligent-procurement/
+- Coupa. *Coupa Launches Coupa Compose and Catalyst*. https://www.coupa.com/newsroom/coupa-launches-coupa-compose-and-catalyst-to-accelerate-agentic-ai-value-and-delivery-at-inspire-2026/
+- Ivalua. *Agentic AI in Procurement: Best Practices & Strategies*. https://www.ivalua.com/blog/agentic-ai-in-procurement/
+- JAGGAER. *Agentic AI in Procurement, Part 1*. https://www.jaggaer.com/blog/agentic-ai-in-procurement-part-1-necessity
+- GEP. https://www.gep.com/ ; https://www.gep.com/blog/technology/agentic-ai-orchestration-enterprise-procurement-guide
+- Globality. https://www.globality.com/products/autonomous-sourcing/
+- Businesswire. (2024, 22 de octubre). *Globality Raises $47 Million*. https://www.businesswire.com/news/home/20241022916716/en/Globality-Raises-$47-Million-to-Accelerate-Growth-of-Its-Industry-Leading-AI-Powered-Autonomous-Sourcing-Software
+- Accenture Newsroom. (2025). *Accenture Expands AI Refinery*. https://newsroom.accenture.com/news/2025/accenture-expands-ai-refinery-and-launches-new-industry-agent-solutions-to-accelerate-agentic-ai-adoption
+- Accenture Newsroom. (2026). *ServiceNow and Accenture Launch Forward Deployed Engineering Program*. https://newsroom.accenture.com/news/2026/servicenow-and-accenture-launch-forward-deployed-engineering-program-to-scale-agentic-ai-across-the-enterprise
+- BCG. (2026). *The $200 Billion Agentic AI Opportunity for Tech Service Providers*. https://www.bcg.com/publications/2026/the-200-billion-dollar-ai-opportunity-in-tech-services
+- BCG. (2025, 27 de febrero). *Executive Perspectives: Future of Procurement with AI*. https://www.bcg.com/assets/2025/executive-perspectives-future-of-procurement-with-ai-27feb.pdf
+
+### Fuentes de prensa / secundarias
+- Fortune. (2026, 4 de mayo). *Anthropic takes shot at consulting industry*. https://fortune.com/2026/05/04/anthropic-claude-consulting-industry-joint-venture-blackstone-goldman-sachs/
+- CNBC. (2026, 4 de mayo). *Anthropic teams with Goldman, Blackstone*. https://www.cnbc.com/2026/05/04/anthropic-goldman-blackstone-ai-venture.html
+- TechCrunch. (2026, 4 de mayo). *Anthropic and OpenAI are both launching joint ventures*. https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/
+- Blue Spoon Consulting. *Anthropic and OpenAI Just Built the Same Company*. https://www.bluespoonconsulting.com/blog/mckinsey-vs-mckinsey
+- IntuitionLabs. *Claude Enterprise Guide 2026*. https://intuitionlabs.ai/articles/claude-enterprise-deployment-training-guide-2026
+- VentureBeat. *Consulting giant McKinsey unveils its own generative AI tool for employees: Lilli*. https://venturebeat.com/ai/consulting-giant-mckinsey-unveils-its-own-generative-ai-tool-for-employees-lilli
+- CIO Dive. *McKinsey rolls out generative AI tool 'Lilli' to 7K employees*. https://www.ciodive.com/news/McKinsey-generative-AI-Lilli-platform-internal-employees/691231/
+- Futurum Group. *Is SAP's Next-Gen Ariba the Missing Link for Real Agentic Procurement Workflows?* https://futurumgroup.com/insights/is-saps-next-gen-ariba-the-missing-link-for-real-agentic-procurement-workflows/
+- Futurum Group. *Can ServiceNow and Microsoft Deliver Unified Oversight for AI Agents?* https://futurumgroup.com/insights/can-servicenow-and-microsoft-deliver-unified-oversight-for-ai-agents/
+- Procurement Magazine / CPOstrategy. *Zycus concludes Agentic AI Procurement Summit 2026*. https://cpostrategy.media/blog/2026/05/22/zycus-concludes-agentic-ai-procurement-summit-2026-with-a-mandate-for-cpo-led-ai-ownership/
+- paperclipped.de. *AI Agents in Procurement 2026: McKinsey Data on 15-30% Efficiency Gains*. https://www.paperclipped.de/en/blog/ai-agents-procurement/
+- Stellagent. *Bain & Company Forecasts "Up to $500 Billion by 2030" for Agentic Commerce*. https://stellagent.ai/insights/bain-agentic-ai-retail-2030-forecast
+- Google Cloud Press Corner. (2026, 22 de abril). https://www.googlecloudpresscorner.com/2026-04-22-McKinsey-and-Google-Cloud-Launch-the-McKinsey-Google-Transformation-Group-to-Scale-Enterprise-Impact-for-the-AI-era
+
+**Fecha de última actualización de este documento:** 2026-07-01 (investigación completa, ver estado final abajo).
