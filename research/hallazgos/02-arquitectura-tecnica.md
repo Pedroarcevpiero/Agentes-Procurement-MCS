@@ -172,6 +172,40 @@ Ya cubierto en profundidad en secciones 1.1-1.5 (definición de mesh, 7 capacida
 
 **Brecha**: no se pudo acceder al código fuente línea por línea (los fetches devolvieron resúmenes generados, no el raw README completo) — para una evaluación de adopción real, un equipo técnico debería clonar el repo y revisar los CRDs y ejemplos directamente en `/examples`.
 
+#### 2.6.1 HECHO VERIFICADO — código fuente inspeccionado (2026-07-02)
+
+🟢 **HECHO VERIFICADO**. Nota de método: el `git clone` directo del repositorio fue bloqueado por la política de egress del entorno de este agente (403 al intentar `https://github.com/mckinsey/agents-at-scale-ark.git` y a `api.github.com`); la inspección se realizó vía `WebFetch` sobre las páginas HTML de GitHub (vistas de árbol de directorios y de archivos individuales) del repo `mckinsey/agents-at-scale-ark`, rama `main`. Fuente: GitHub, repositorio `mckinsey/agents-at-scale-ark`, acceso 2026-07-02.
+
+**(a) CRDs / recursos declarativos que define** — confirmado directamente en `ark/config/crd/bases/` (11 archivos CRD, prefijo `ark.mckinsey.com_`):
+- `ark.mckinsey.com_agents.yaml` → **Agent**
+- `ark.mckinsey.com_teams.yaml` → **Team**
+- `ark.mckinsey.com_models.yaml` → **Model**
+- `ark.mckinsey.com_queries.yaml` → **Query**
+- `ark.mckinsey.com_tools.yaml` → **Tool**
+- `ark.mckinsey.com_mcpservers.yaml` → **MCPServer**
+- `ark.mckinsey.com_a2aservers.yaml` → **A2AServer**
+- `ark.mckinsey.com_a2atasks.yaml` → **A2ATask**
+- `ark.mckinsey.com_memories.yaml` → **Memory**
+- `ark.mckinsey.com_executionengines.yaml` → **ExecutionEngine**
+- `ark.mckinsey.com_arkconfigs.yaml` → **ArkConfig**
+
+Esto confirma y amplía lo ya reportado en 2.6: además de Agent/Team/Model/Query/Tool/MCPServer, el repo define explícitamente CRDs separadas para A2A (servidores y tareas), memoria (`Memory`) y motores de ejecución (`ExecutionEngine`), y una CRD de configuración global (`ArkConfig`).
+
+**(b) `/examples` y `/samples`, y presencia de procurement/sourcing** — confirmado: NO existe ningún ejemplo, carpeta o archivo relacionado con procurement o sourcing en el repositorio.
+- `/examples/demo-namespaces/` contiene únicamente `README.md` y `kyc-demo.yaml` (un demo de "know your customer" genérico para namespaces de demo, dominio banca/compliance, no procurement).
+- `/samples/` (directorio más amplio de ejemplos técnicos) contiene: `a2a/simple-agent/`, `agent-modernization/`, `agents-as-tools/`, `agents/`, `marketplace/`, `mcp/`, `mocks/`, `models/`, `observability/`, `queries/`, `quickstart/`, `teams/`, `tools/`, `walkthrough/` — todos son ejemplos técnicos de infraestructura/orquestación (RBAC, integración MCP, patrones de equipos, observabilidad), ninguno con contenido de dominio de negocio (ni procurement, ni banca real, ni supply chain). La carpeta `marketplace/` (que podría sugerir un caso de negocio) resultó ser sobre control de acceso RBAC a un "marketplace" de fuentes/agentes dentro de la plataforma, no sobre un caso de uso de sourcing/compras.
+- Búsqueda de código GitHub (`repo:mckinsey/agents-at-scale-ark procurement`) no devolvió resultados accesibles sin autenticación adicional, pero la revisión manual de `/examples` y `/samples` confirma la ausencia. **Conclusión: se confirma la inferencia previa de la sección 2.6 — ARK es un framework de infraestructura genérico, sin ningún acelerador o plantilla vertical de procurement.**
+
+**(c) Providers de LLM soportados de fábrica** — confirmado en `/samples/models/`, que contiene archivos de configuración de ejemplo para: `claude.yaml` (Anthropic Claude), `gemini.yaml` (Google Gemini), `local-ollama.yaml` (Ollama local), `default.yaml` (config por defecto, típicamente Azure OpenAI en el flujo `ark models create default` documentado en 2.6) y `model-with-properties.yaml` (ejemplo de propiedades adicionales de configuración). Esto confirma textualmente la afirmación del README del repo: soporte nativo para **"OpenAI, Anthropic, Google, Azure, or local Ollama without code changes"** — es decir, la lista de proveedores de la sección 2.6 queda verificada con evidencia de archivos de ejemplo reales, incluyendo confirmación explícita de que Anthropic/Claude es uno de los providers soportados de fábrica (dato relevante dado que el corpus general de McKinsey rara vez menciona a Anthropic — ver documento 04).
+
+**(d) Madurez** — confirmado:
+- **Licencia**: Apache License, Version 2.0 (confirmado leyendo `LICENSE` en la raíz del repo).
+- **Releases**: al menos 49+ releases; los 5 más recientes visibles en la página de releases al momento del acceso son v0.1.65 (23-jun-2026), v0.1.65-rc (22-jun-2026), v0.1.64 (15-jun-2026), v0.1.64-rc.1 (11-jun-2026), v0.1.64-rc (8-jun-2026) — cadencia de releases de días/una semana, con versiones release candidate previas a cada release estable.
+- **Actividad reciente**: el último release estable es de apenas ~9 días antes de la fecha de esta verificación (2026-07-02) — el proyecto está en desarrollo activo y continuo, no abandonado.
+- **Estructura del repo ampliada** respecto a lo reportado en 2.6: además de `/ark`, `/services`, `/lib`, `/examples`, `/infrastructure`, `/charts`, `/tools`, `/docs`, se confirma la existencia de `/samples` (ejemplos técnicos separados de `/examples`), `/openspec` (archivos de especificación), `/tests`, `/scripts`, y carpetas de configuración `.claude`, `.claude-plugin`, `.github`.
+
+Fuente de toda la sección 2.6.1: GitHub, `mckinsey/agents-at-scale-ark` (páginas de árbol de directorios `main/ark/config/crd/bases`, `main/examples`, `main/examples/demo-namespaces`, `main/samples`, `main/samples/models`, `main/samples/marketplace`, `main/ark`, y archivo `LICENSE`; página de releases), sin fecha de publicación única (repositorio vivo), acceso 2026-07-02.
+
 ### 2.3 "How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh" (QuantumBlack Medium, jun. 2025) — LA FUENTE TÉCNICA MÁS PROFUNDA (documentación conceptual)
 
 🟢 **HECHO VERIFICADO** — Fuente: *How we enabled Agents at Scale in the Enterprise with the Agentic AI Mesh*, blog de QuantumBlack (AI by McKinsey) en Medium, autor principal Dave Kerr (con colaboradores), 12 de junio de 2025. URL: https://medium.com/quantumblack/how-we-enabled-agents-at-scale-in-the-enterprise-with-the-agentic-ai-mesh-baf4290daf48 (acceso 2026-07-01).
