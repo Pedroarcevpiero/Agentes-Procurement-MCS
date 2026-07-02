@@ -27,6 +27,9 @@ Archivo completo de hallazgos: `research/hallazgos/03-casos-uso-procurement.md`
 - No se profundizó en desglose de agentic AI específico de procurement dentro del "State of AI" survey corporativo de QuantumBlack (puede ser cubierto por otro agente del equipo).
 - Posible reciclaje del mismo dato "10-15% ahorro" entre el caso telco específico y el benchmark agregado de tail spend — no aclarado por McKinsey.
 
+## Verificación puntual (2026-07-02)
+- **VERIFICACIÓN 2 — cifras del artículo insignia**: verificado palabra por palabra contra los 3 artículos primarios (A=feb-2026, B=oct-2025, C=jun-2025). Solo 2 de las 4 cifras "insignia" se confirman verbatim: **25-40%** aparece en B (dos veces), NO en A (la tabla previa lo atribuía erróneamente a "A, B"); **10-15%** aparece UNA sola vez, en A, ligado únicamente al caso telco — no es un benchmark agregado independiente como sugería la tabla, es el mismo dato citado dos veces dentro de nuestro propio documento. **15-30%** ("autonomous category agents") y **75%** (reducción RFP) NO se encontraron en ningún artículo primario de McKinsey — marcadas como NO VERIFICABLES, probable atribución errónea de fuente secundaria. Detalle completo en la nueva sección "3.bis Verificación de cifras contra fuente primaria" de `research/hallazgos/03-casos-uso-procurement.md`.
+
 ## Confirmación
 
 Ambos archivos requeridos están escritos y actualizados:

@@ -32,3 +32,6 @@ Fecha de acceso a todas las fuentes: 2026-07-01. 14 fuentes primarias consultada
 - Sin comparación técnica cuantitativa entre frameworks de orquestación (solo se listan como intercambiables).
 - Ningún caso citado (procurement, banca, telco, seguros) publica metodología de medición de impacto — todas las cifras son afirmación del vendor.
 - **Brecha más importante**: la arquitectura técnica detallada (mesh/ARK/evals) y los casos de uso de procurement viven en fuentes separadas que McKinsey nunca cruza explícitamente — no existe un artículo que aplique el detalle arquitectónico paso a paso a un caso de procurement.
+
+## Verificación puntual (2026-07-02)
+- **VERIFICACIÓN 1 — ARK, código fuente inspeccionado**: confirmado vía GitHub (WebFetch, git clone bloqueado por política de egress) — 11 CRDs (Agent, Team, Model, Query, Tool, MCPServer, A2AServer, A2ATask, Memory, ExecutionEngine, ArkConfig), licencia Apache 2.0, 49+ releases (última v0.1.65, 23-jun-2026, desarrollo activo), providers de fábrica OpenAI/Azure/Anthropic/Google/Ollama (confirmado por archivos `samples/models/*.yaml` incl. `claude.yaml`), y **ningún ejemplo de procurement/sourcing** en `/examples` ni `/samples` (confirma la inferencia previa). Detalle en sección 2.6.1 de `research/hallazgos/02-arquitectura-tecnica.md`.

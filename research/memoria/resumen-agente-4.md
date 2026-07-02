@@ -23,3 +23,7 @@ Archivo completo de hallazgos: `research/hallazgos/04-ecosistema-partners.md`
 - Relación McKinsey-SAP específica en Ariba no explorada a fondo (solo alianza general).
 - Sin pieza dedicada de Bain a procurement B2B agéntico.
 - Sin partnership McKinsey-Zip encontrado.
+
+## Verificación puntual (2026-07-02)
+- **VERIFICACIÓN 3 — McKinsey-Microsoft Copilot Studio**: corregida la fecha. El blog de McKinsey citado ("...enabled by Copilot Studio") es del **29-may-2024** (fuera de la ventana jul-2024/jul-2026) y NO menciona el caso del agente de onboarding. Ese caso concreto (-90% lead time, -30% trabajo administrativo) proviene en realidad del blog oficial de Microsoft *"New autonomous agents scale your team like never before"*, **21-oct-2024** (dentro de ventana). Detalle en sección 2.5 de `research/hallazgos/04-ecosistema-partners.md`.
+- **VERIFICACIÓN 4 — McKinsey-SAP/Ariba**: BRECHA DEFINITIVA verificada. La alianza general SAP-McKinsey solo nombra "Intelligent Spend Management" como categoría (sin mencionar Ariba, sin detalle) entre sus áreas de foco (centradas en S/4HANA/cloud); no se encontró integración, co-desarrollo, certificación de partner ni caso conjunto documentado específico de SAP Ariba/procurement más allá del ya conocido hospedaje de Spendscape sobre SAP BTP. Detalle en sección 3.2 de `research/hallazgos/04-ecosistema-partners.md`.
