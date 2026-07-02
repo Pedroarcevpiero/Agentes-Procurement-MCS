@@ -1,0 +1,42 @@
+# Asignacion de modelos por rol de agente.
+#
+# Regla del sistema: los modelos SIEMPRE se referencian por alias del Claude
+# Agent SDK (`opus` / `sonnet` / `haiku`), nunca por IDs de modelo
+# versionados en codigo. Este archivo es la unica fuente de verdad para
+# saber que alias usa cada rol; los constructores de AgentDefinition /
+# ClaudeAgentOptions deben leerlo en vez de hardcodear el alias.
+
+orchestrator:
+  alias: opus
+  justification: >
+    Bajo volumen de invocaciones, alto juicio: descompone la consulta del
+    comprador, reparte trabajo entre subagentes de dominio y sintetiza la
+    respuesta final citando fuentes.
+
+critic:
+  alias: opus
+  justification: >
+    Agente hoja de solo lectura que re-verifica citas contra el data spine
+    antes de responder al comprador; requiere el mismo nivel de juicio que
+    el orquestador para detectar afirmaciones no soportadas.
+
+spend_market_agent:
+  alias: sonnet
+  justification: >
+    Subagente de dominio de alto volumen relativo (integra spend + mercado,
+    detecta oportunidades de ahorro). Mejor costo/beneficio para tareas de
+    analisis estructurado y bien delimitado.
+
+demand_simulation_agent:
+  alias: sonnet
+  justification: >
+    Subagente de dominio que corre escenarios de volatilidad de demanda
+    (bajo/base/alto). Tarea estructurada, no requiere el juicio de Opus.
+
+invoice_to_contract_agent:
+  alias: haiku
+  justification: >
+    Reservado para un futuro agente de extraccion de alto volumen
+    (emparejar facturas contra contratos). Haiku por costo en tareas de
+    extraccion repetitivas de bajo riesgo.
+  status: reserved_future_agent

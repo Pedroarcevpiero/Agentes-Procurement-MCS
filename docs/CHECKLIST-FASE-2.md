@@ -10,8 +10,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Fase actual** | Fase 0 — Inicialización (checklist recién creado) |
-| **Última fase cerrada** | Fase 1 (investigación) — commit `859539a` en `claude/mckinsey-procurement-agents-pjakpv` |
+| **Fase actual** | Fase 3 — Servidores MCP (pendiente, siguiente implementador) |
+| **Última fase cerrada** | Fase 2 (data spine + generador sintético) — implementada por IMPLEMENTADOR 1, pendiente de commit por el orquestador |
 | **Rama de trabajo** | `claude/mckinsey-procurement-agents-pjakpv` |
 | **Último commit de cierre de fase** | `859539a` — "Documento final de investigación en formato APA 7" |
 | **Leyenda de estado** | ⬜ pendiente · 🔄 en progreso (con nota "dónde me quedé") · ✅ hecho (con evidencia/comando) |
@@ -41,31 +41,31 @@ Al avanzar, **escribe a disco inmediatamente**: cambia `⬜ pendiente` a `🔄 e
 
 ## Fase 1 — Esqueleto del proyecto
 
-- [ ] `pyproject.toml` creado con `requires-python = ">=3.11"` — _estado: ⬜ pendiente_
-- [ ] Dependencias runtime declaradas: `claude-agent-sdk`, `sqlalchemy`, `alembic`, `psycopg`, `fastapi`, `uvicorn`, `faker`, `numpy`, `pandas`, `pydantic-settings`, `arize-phoenix-otel` — _estado: ⬜ pendiente_
-- [ ] Grupo de dependencias `[dev]` con `pytest` (y utilidades de test) declarado — _estado: ⬜ pendiente_
-- [ ] Árbol de módulos creado bajo `src/procurement_agents/` (config, agents, guardrails, mcp_servers, data_spine, sessions, observability, app) con `__init__.py` donde corresponda — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/config/settings.py` (pydantic-settings) creado — _estado: ⬜ pendiente_
-- [ ] `.env.example` creado con variables necesarias (DB URL, claves, endpoints OTLP/Phoenix) — _estado: ⬜ pendiente_
-- [ ] `config/model_assignment.yaml` creado: orquestador=`opus`, crítico=`opus`, subagentes=`sonnet`, `haiku` reservado — _estado: ⬜ pendiente_
-- [ ] `infra/docker-compose.yml` con servicios `postgres` y `phoenix` (OTLP 4318, UI 6006) — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 1**: `pip install -e .` corre sin errores — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 1**: `docker compose -f infra/docker-compose.yml up -d` levanta postgres y phoenix sanos — _estado: ⬜ pendiente_
+- [x] `pyproject.toml` creado con `requires-python = ">=3.11"` — _estado: ✅ hecho — evidencia: `pyproject.toml` en raíz, `requires-python = ">=3.11"`_
+- [x] Dependencias runtime declaradas: `claude-agent-sdk`, `sqlalchemy`, `alembic`, `psycopg`, `fastapi`, `uvicorn`, `faker`, `numpy`, `pandas`, `pydantic-settings`, `arize-phoenix-otel` — _estado: ✅ hecho — evidencia: sección `[project.dependencies]`/`[project.optional-dependencies.dev]` de `pyproject.toml`; nota: `arize-phoenix-otel` quedó en `[dev]` (herramienta de evals/observabilidad, no runtime de agentes) y se añadió `pyyaml` (requerido por el plan para `model_assignment.yaml`/`registry.yaml`)_
+- [x] Grupo de dependencias `[dev]` con `pytest` (y utilidades de test) declarado — _estado: ✅ hecho — evidencia: `[project.optional-dependencies] dev = [pytest, pytest-asyncio, httpx, arize-phoenix-otel]`_
+- [x] Árbol de módulos creado bajo `src/procurement_agents/` (config, agents, guardrails, mcp_servers, data_spine, sessions, observability, app) con `__init__.py` donde corresponda — _estado: ✅ hecho — evidencia: `find src -name __init__.py` lista todos los subpaquetes incl. `agents/{orchestrator,critic,category_copilot}`, `guardrails`, `mcp_servers/tools`, `data_spine/synth`_
+- [x] `src/procurement_agents/config/settings.py` (pydantic-settings) creado — _estado: ✅ hecho — evidencia: `python -c "from procurement_agents.config.settings import get_settings; get_settings()"` funciona sin `ANTHROPIC_API_KEY` en el entorno_
+- [x] `.env.example` creado con variables necesarias (DB URL, claves, endpoints OTLP/Phoenix) — _estado: ✅ hecho — evidencia: `.env.example` en raíz_
+- [x] `config/model_assignment.yaml` creado: orquestador=`opus`, crítico=`opus`, subagentes=`sonnet`, `haiku` reservado — _estado: ✅ hecho — evidencia: `src/procurement_agents/config/model_assignment.yaml`_
+- [x] `infra/docker-compose.yml` con servicios `postgres` y `phoenix` (OTLP 4318, UI 6006) — _estado: ✅ hecho — evidencia: `infra/docker-compose.yml`; healthcheck de phoenix ajustado a `python3 -c urllib.request` porque la imagen `arizephoenix/phoenix:latest` no trae `wget`_
+- [x] **Éxito Fase 1**: `pip install -e ".[dev]"` corre sin errores — _estado: ✅ hecho — evidencia: `pip install -e ".[dev]"` en venv Python 3.11.15, `Successfully installed ... procurement-agents-0.1.0`_
+- [x] **Éxito Fase 1**: `docker compose -f infra/docker-compose.yml up -d` levanta postgres y phoenix sanos — _estado: ✅ hecho — evidencia: `docker compose -f infra/docker-compose.yml ps` muestra ambos contenedores `Up ... (healthy)`; `docker exec procurement-postgres pg_isready -U procurement -d procurement` → "accepting connections"; `curl localhost:6006` → HTTP 200. Nota entorno: el daemon Docker no estaba corriendo por defecto en el contenedor de la sesión; se arrancó manualmente con `dockerd &` antes de `docker compose up`_
 
 ---
 
 ## Fase 2 — Data spine + generador sintético
 
-- [ ] Modelos SQLAlchemy de las **8 tablas** creados en `src/procurement_agents/data_spine/models.py`: `suppliers`, `categories`, `spend_transactions`, `contracts`, `invoices`, `market_benchmarks`, `savings_opportunities`, `demand_scenarios` — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/data_spine/db.py` (engine/session/conexión Postgres) creado — _estado: ⬜ pendiente_
-- [ ] Alembic inicializado en `src/procurement_agents/data_spine/migrations/` — _estado: ⬜ pendiente_
-- [ ] Migración Alembic inicial generada y aplica limpia contra Postgres (`alembic upgrade head`) — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/data_spine/synth/generate.py` con `--seed` reproducible creado — _estado: ⬜ pendiente_
-- [ ] Generador produce ~200 proveedores y 15 categorías — _estado: ⬜ pendiente_
-- [ ] Generador produce 24 meses de historia — _estado: ⬜ pendiente_
-- [ ] `generate.py --seed 42` produce ≥50k `spend_transactions` — _estado: ⬜ pendiente_
-- [ ] Coherencia referencial verificada por SQL: spend ↔ contratos ↔ benchmarks (FKs válidas, sin huérfanos) — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 2**: ≥50k transacciones coherentes verificadas por consulta SQL — _estado: ⬜ pendiente_
+- [x] Modelos SQLAlchemy de las **8 tablas** creados en `src/procurement_agents/data_spine/models.py`: `suppliers`, `categories`, `spend_transactions`, `contracts`, `invoices`, `market_benchmarks`, `savings_opportunities`, `demand_scenarios` — _estado: ✅ hecho — evidencia: `src/procurement_agents/data_spine/models.py`, estilo `Mapped`/`mapped_column` SQLAlchemy 2.0, FKs + índices en `category_id`/`supplier_id`/`transaction_date`; `savings_opportunities` guarda `source_transaction_ids`/`source_benchmark_ids` (JSONB) para el guardrail de citas_
+- [x] `src/procurement_agents/data_spine/db.py` (engine/session/conexión Postgres) creado — _estado: ✅ hecho — evidencia: `src/procurement_agents/data_spine/db.py` (`get_engine`, `get_session_factory`, `session_scope`)_
+- [x] Alembic inicializado en `src/procurement_agents/data_spine/migrations/` — _estado: ✅ hecho — evidencia: `alembic.ini` en raíz (`script_location = %(here)s/src/procurement_agents/data_spine/migrations`), `env.py` carga `Settings().database_url` y `Base.metadata` de `data_spine/models.py`_
+- [x] Migración Alembic inicial generada y aplica limpia contra Postgres (`alembic upgrade head`) — _estado: ✅ hecho — evidencia: `alembic revision --autogenerate -m "initial data spine schema"` generó `versions/fcf480af6941_initial_data_spine_schema.py`; `alembic upgrade head` → "Running upgrade -> fcf480af6941"; `docker exec procurement-postgres psql -U procurement -d procurement -c "\dt"` lista las 8 tablas + `alembic_version`_
+- [x] `src/procurement_agents/data_spine/synth/generate.py` con `--seed` reproducible creado — _estado: ✅ hecho — evidencia: `python -m procurement_agents.data_spine.synth.generate --suppliers 200 --categories 15 --months 24 --seed 42` corrido dos veces produce exactamente los mismos agregados (61,774 spend_transactions, mismo total USD 289,850,686.28, 152 contratos, suma de price_index idéntica 36844.4756) → reproducibilidad confirmada. Módulos auxiliares: `taxonomy.py` (15 categorías), `suppliers_gen.py`, `contracts_gen.py`, `market_gen.py`, `spend_gen.py` (transacciones + facturas)_
+- [x] Generador produce ~200 proveedores y 15 categorías — _estado: ✅ hecho — evidencia: salida del comando "categories: 15", "suppliers: 200"_
+- [x] Generador produce 24 meses de historia — _estado: ✅ hecho — evidencia: `market_gen.month_range(24, ...)`; `market_benchmarks` = 360 filas = 15 categorías × 24 meses (verificado por SQL)_
+- [x] `generate.py --seed 42` produce ≥50k `spend_transactions` — _estado: ✅ hecho — evidencia: salida "spend_transactions: 61,774" (holgura ~24% sobre el mínimo de 50k); parámetros de volumen mensual por categoría en `taxonomy.py` calibrados para ese margen_
+- [x] Coherencia referencial verificada por SQL: spend ↔ contratos ↔ benchmarks (FKs válidas, sin huérfanos) — _estado: ✅ hecho — evidencia: consultas SQL vía `docker exec procurement-postgres psql`: `orphan_supplier_txns=0`, `orphan_category_txns=0`, `orphan_contract_txns=0`, `orphan_invoice_supplier=0`, `orphan_invoice_txn=0`, `orphan_benchmark_category=0`; `categories_with_zero_spend=0` (las 15 categorías tienen spend > 0); cobertura de contrato sobre el gasto en USD = 59.55% (objetivo "~60%" del plan); facturas: 90.04% `matched`, 5.02% `discrepancy`, 4.94% `unmatched` (≈10% con discrepancias, tal como pide el plan para el futuro agente invoice-to-contract)_
+- [x] **Éxito Fase 2**: ≥50k transacciones coherentes verificadas por consulta SQL — _estado: ✅ hecho — evidencia: ver ítems anteriores; total_spend_usd=289,850,686.28 > 0, distribuido en las 15 categorías, sin huérfanos_
 
 ---
 

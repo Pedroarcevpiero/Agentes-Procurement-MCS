@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: procurement-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-procurement}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-procurement}
+      POSTGRES_DB: ${POSTGRES_DB:-procurement}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - procurement_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-procurement} -d ${POSTGRES_DB:-procurement}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    container_name: procurement-phoenix
+    restart: unless-stopped
+    ports:
+      - "6006:6006" # UI
+      - "4318:4318" # OTLP HTTP
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:6006').status",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  procurement_postgres_data:
