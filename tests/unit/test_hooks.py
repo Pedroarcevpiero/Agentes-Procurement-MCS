@@ -196,6 +196,117 @@ async def test_confidence_hook_ignores_other_tools() -> None:
     assert output == {}
 
 
+# --- hardening Fase 5 (avisos 7 y 9 del supervisor) ----------------------------------------
+
+
+async def test_confidence_hook_coerces_numeric_string_confidence_and_still_degrades(
+    fixtures: dict[str, Any],
+) -> None:
+    """Aviso 7: `confidence_score` como string numerico ya NO esquiva el umbral."""
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": "0.05",  # string, pero coercible; por debajo del umbral (0.6)
+        "estimated_savings_usd": 100.0,
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "allow"
+    assert hook_output["updatedInput"]["status"] == "needs_review"
+    assert "confidence_score=0.05" in hook_output["permissionDecisionReason"]
+
+
+async def test_confidence_hook_coerces_numeric_string_savings_above_limit(
+    fixtures: dict[str, Any],
+) -> None:
+    """Aviso 7: `estimated_savings_usd` como string numerico tambien se coerciona."""
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": 0.95,
+        "estimated_savings_usd": "300000.0",  # string, > max_auto_publish_usd (250_000)
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "allow"
+    assert hook_output["updatedInput"]["status"] == "needs_review"
+    assert "max_auto_publish_usd" in hook_output["permissionDecisionReason"]
+
+
+@pytest.mark.parametrize("bad_confidence", ["no-se-cuanto", "N/A", "  ", [0.9], {"x": 1}])
+async def test_confidence_hook_denies_non_coercible_confidence_score(
+    fixtures: dict[str, Any], bad_confidence: Any
+) -> None:
+    """Confianza no coercible a numero -> deny (fail-closed), no un `allow` silencioso."""
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": bad_confidence,
+        "estimated_savings_usd": 100.0,
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "deny"
+    assert "confidence_score" in hook_output["permissionDecisionReason"]
+
+
+@pytest.mark.parametrize("bad_savings", ["mucho", "$50,000", None])
+async def test_confidence_hook_denies_non_coercible_savings(fixtures: dict[str, Any], bad_savings: Any) -> None:
+    if bad_savings is None:
+        # None es "ausente" (validado aguas abajo por la tool/schema requerido),
+        # no un valor invalido en si mismo para este hook - se excluye del caso "deny".
+        pytest.skip("estimated_savings_usd=None se trata como ausente, no como tipo invalido")
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": 0.9,
+        "estimated_savings_usd": bad_savings,
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "deny"
+    assert "estimated_savings_usd" in hook_output["permissionDecisionReason"]
+
+
+async def test_confidence_hook_denies_negative_savings(fixtures: dict[str, Any]) -> None:
+    """Aviso 9: ahorro negativo se deniega (no se auto-publica ni se degrada solamente)."""
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": 0.9,
+        "estimated_savings_usd": -500.0,
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "deny"
+    assert "positivo" in hook_output["permissionDecisionReason"]
+
+
+async def test_confidence_hook_denies_zero_savings(fixtures: dict[str, Any]) -> None:
+    """Aviso 9: ahorro cero tampoco tiene sentido de negocio -> deny."""
+    tool_input = {
+        "status": "proposed",
+        "confidence_score": 0.9,
+        "estimated_savings_usd": 0.0,
+        "source_transaction_ids": [fixtures["transaction_id"]],
+    }
+    output = await confidence_and_threshold_hook(
+        _pretooluse_input(RECORD_SAVINGS_OPPORTUNITY_TOOL, tool_input), "toolu_test", {"signal": None}
+    )
+    hook_output = output["hookSpecificOutput"]
+    assert hook_output["permissionDecision"] == "deny"
+
+
 # --- no_transactional_execution_hook -------------------------------------------------------
 
 

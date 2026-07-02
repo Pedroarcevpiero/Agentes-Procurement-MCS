@@ -109,47 +109,110 @@ async def require_citation_hook(
     return _allow()
 
 
+def _coerce_float(value: Any) -> float | None:
+    """Coerciona `value` a `float`, aceptando `int`/`float` y strings numericos.
+
+    Devuelve `None` si `value` es `None` o si no es coercible a `float`
+    (ej. `"abc"`, listas, dicts). `bool` se rechaza explicitamente (`True`/
+    `False` son subclase de `int` en Python pero no son cifras de negocio
+    validas aqui).
+
+    Endurecimiento (aviso 7 del supervisor de Fase 4): antes de esto, un
+    `confidence_score`/`estimated_savings_usd` que llegara como *string*
+    (ej. `"0.05"`) esquivaba en silencio el chequeo de umbral porque
+    `isinstance(x, (int, float))` es `False` para strings. Ahora se
+    coerciona explicitamente; si la coercion falla, el llamador debe tratar
+    el valor como invalido (fail-closed: `_deny`, no `_allow`).
+    """
+    if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value.strip())
+        except ValueError:
+            return None
+    return None
+
+
 async def confidence_and_threshold_hook(
     input_data: dict[str, Any], tool_use_id: str | None, context: Any
 ) -> dict[str, Any]:
     """Degrada `status` a `needs_review` si confianza/ahorro exceden la politica.
 
-    Tres senales, cualquiera dispara la degradacion (ver
+    Cuatro senales, cualquiera dispara la degradacion (ver
     `policies/category_copilot.yaml`):
     - `confidence_score < min_confidence_auto_publish`.
     - `estimated_savings_usd > max_auto_publish_usd`.
     - `estimated_savings_usd` excede `max_auto_publish_pct`% del monto total
       de las `source_transaction_ids` citadas (limite de sanidad contra
       alucinaciones de ahorro, ej. "90% de ahorro" sin base real).
+    - `estimated_savings_usd <= 0` (un "ahorro" negativo o cero no tiene
+      sentido de negocio y nunca debe auto-publicarse).
 
-    No actua si el `status` ya es `needs_review`/`rejected`.
+    Ademas, si `confidence_score`/`estimated_savings_usd` vienen presentes
+    pero no son coercibles a numero (ej. `"no-se-cuanto"`), la llamada se
+    **deniega** directamente (no se permite continuar con un valor no
+    numerico disfrazado de cifra de negocio) en vez de degradarse a
+    `needs_review`.
+
+    No actua (mas alla de la validacion de tipo) si el `status` ya es
+    `needs_review`/`rejected`.
     """
     if input_data.get("tool_name") != RECORD_SAVINGS_OPPORTUNITY_TOOL:
         return _allow()
 
     tool_input = input_data.get("tool_input") or {}
     status = tool_input.get("status", "proposed")
+
+    raw_confidence = tool_input.get("confidence_score")
+    raw_savings = tool_input.get("estimated_savings_usd")
+
+    # Fail-closed: si el valor esta presente pero no es un numero (ni
+    # siquiera como string numerico), no confiamos en el resto de la
+    # tool/validaciones aguas abajo para decidir - se deniega aqui mismo.
+    type_errors: list[str] = []
+    confidence_score = _coerce_float(raw_confidence)
+    if raw_confidence is not None and confidence_score is None:
+        type_errors.append(f"confidence_score={raw_confidence!r} no es un numero valido")
+    estimated_savings_usd = _coerce_float(raw_savings)
+    if raw_savings is not None and estimated_savings_usd is None:
+        type_errors.append(f"estimated_savings_usd={raw_savings!r} no es un numero valido")
+
+    if type_errors:
+        reason = "record_savings_opportunity denegado por valores no numericos: " + "; ".join(type_errors)
+        logger.warning("confidence_and_threshold_hook denego por tipo invalido: %s", reason)
+        return _deny(reason)
+
     if status in _ALREADY_REVIEWED_STATUSES:
         return _allow()
 
-    confidence_score = tool_input.get("confidence_score")
-    estimated_savings_usd = tool_input.get("estimated_savings_usd")
     source_transaction_ids = tool_input.get("source_transaction_ids") or []
 
     policy = get_category_copilot_policy()
     reasons: list[str] = []
 
-    if isinstance(confidence_score, (int, float)) and confidence_score < policy.min_confidence_auto_publish:
+    if confidence_score is not None and confidence_score < policy.min_confidence_auto_publish:
         reasons.append(
             f"confidence_score={confidence_score} < min_confidence_auto_publish={policy.min_confidence_auto_publish}"
         )
 
-    if isinstance(estimated_savings_usd, (int, float)) and estimated_savings_usd > policy.max_auto_publish_usd:
+    if estimated_savings_usd is not None and estimated_savings_usd <= 0:
+        # Ahorro negativo o cero: nunca tiene sentido auto-publicarlo. Se
+        # deniega en lugar de degradar a needs_review porque no es una
+        # cuestion de "revisar con mas cuidado", es un valor invalido de
+        # negocio (aviso 9 del supervisor de Fase 4).
+        reason = f"estimated_savings_usd={estimated_savings_usd} debe ser positivo (>0)."
+        logger.warning("confidence_and_threshold_hook denego ahorro no positivo: %s", reason)
+        return _deny(reason)
+
+    if estimated_savings_usd is not None and estimated_savings_usd > policy.max_auto_publish_usd:
         reasons.append(
             f"estimated_savings_usd={estimated_savings_usd} > max_auto_publish_usd={policy.max_auto_publish_usd}"
         )
 
-    if isinstance(estimated_savings_usd, (int, float)) and source_transaction_ids:
+    if estimated_savings_usd is not None and source_transaction_ids:
         try:
             with session_scope() as session:
                 cited_total = session.execute(
