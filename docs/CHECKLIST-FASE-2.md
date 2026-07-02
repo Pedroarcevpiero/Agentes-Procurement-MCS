@@ -164,4 +164,13 @@ Al avanzar, **escribe a disco inmediatamente**: cambia `⬜ pendiente` a `🔄 e
 
 | Fecha | Fase | Veredicto (APROBADA/DEVUELTA) | Observaciones |
 |---|---|---|---|
-| | | | |
+| 2026-07-02 | Fase 1 | **APROBADA** | Auditoría independiente: `pip show` en `.venv` (Python 3.11.15) confirma `procurement-agents 0.1.0` editable, `claude-agent-sdk 0.2.110`, `sqlalchemy 2.0.51`, `alembic 1.18.5`, `pydantic-settings 2.14.2`; `docker compose ps` → postgres y phoenix `Up (healthy)`; `settings.py` importa sin `ANTHROPIC_API_KEY`. Desviación aceptada: `arize-phoenix-otel` en `[dev]` — **revisar en Fase 7**: si `otel_setup.py` la importa en runtime, moverla a dependencias runtime. |
+| 2026-07-02 | Fase 2 | **APROBADA** | Verificado por SQL propio (no del implementador): 61,774 spend_transactions (≥50k ✓); 200 suppliers, 15 categories, 152 contracts, 59,920 invoices, 360 benchmarks = 15×24 exacto (0 categorías con meses faltantes); 0 huérfanos en las 6 verificaciones de FK; 0 transacciones con supplier/category distinto al de su contrato; 0 transacciones fuera de ventana de contrato; 0 montos ≤0; cobertura de contrato 59.55% del gasto (~60% ✓); facturas 89.99% matched / 5.09% discrepancy / 4.92% unmatched; `alembic_version=fcf480af6941`, migración crea las 8 tablas. Campos clave del plan presentes: `savings_opportunities.source_transaction_ids/source_benchmark_ids` (JSONB) + `confidence_score`; `invoices.match_status`+`discrepancy_*` cubre el rol de `compliance_status`; `demand_scenarios.scenario_type` (low/base/high) + `volatility_index` cubre `volatility_case`. **Avisos para Fase 3+** (no bloqueantes, ver abajo). |
+
+### Avisos del supervisor para implementadores de Fase 3+
+
+1. **Enums en MAYÚSCULAS en BD**: SQLAlchemy persiste el *nombre* del enum, no su valor — en Postgres los estados son `MATCHED`/`DISCREPANCY`/`UNMATCHED`, `ACTIVE`/`EXPIRED`/..., `LOW`/`BASE`/`HIGH`, `PROPOSED`/`NEEDS_REVIEW`/... Un `WHERE match_status='matched'` en SQL crudo devuelve 0 filas. En las tools MCP, filtrar siempre vía el enum de `models.py` (ORM) o usar los nombres en mayúsculas.
+2. **Nombres reales de campos** (no los conceptuales del plan): escenario = `demand_scenarios.scenario_type` (no `volatility_case`); compliance de factura = `invoices.match_status` + `discrepancy_amount`/`discrepancy_reason` (no `compliance_status`).
+3. **`arize-phoenix-otel` está en `[dev]`**: si `observability/otel_setup.py` (Fase 7) la importa en runtime de la app, moverla a dependencias runtime en `pyproject.toml`.
+4. **Docker en este entorno**: el daemon no arranca solo; si `docker compose ps` falla, lanzar `dockerd` en background primero.
+5. **`docker exec procurement-postgres psql -U procurement -d procurement`** es la vía rápida para verificaciones SQL (no hay `psql` en el host).
