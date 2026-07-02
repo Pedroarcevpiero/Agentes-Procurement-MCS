@@ -1,0 +1,15 @@
+# Politica comun a TODOS los agentes del sistema (no especifica de Category
+# Copilot). Cargada por `guardrails/policy_engine.py::load_common_policy` y
+# aplicada por `guardrails/hooks.py::no_transactional_execution_hook`.
+#
+# `transactional_denylist`: fragmentos de nombre de tool (coincidencia por
+# substring, case-insensitive) que NUNCA pueden ejecutarse desde este
+# sistema, sin importar el agente o el modo de permisos. El sistema es de
+# solo-lectura + auditoria (consulta el data spine, registra oportunidades y
+# escenarios) — nunca ejecuta una accion transaccional real (crear una PO,
+# enviar un correo a un proveedor, modificar o firmar un contrato).
+transactional_denylist:
+  - create_purchase_order
+  - send_supplier_email
+  - update_contract
+  - sign_

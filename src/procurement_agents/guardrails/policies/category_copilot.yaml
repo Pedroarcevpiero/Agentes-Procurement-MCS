@@ -1,0 +1,23 @@
+# Politica especifica del agente Category Copilot / Spend Analysis. Cargada
+# por `guardrails/policy_engine.py::load_category_copilot_policy` y aplicada
+# por `guardrails/hooks.py::confidence_and_threshold_hook` sobre la tool
+# `mcp__data_spine__record_savings_opportunity`.
+#
+# min_confidence_auto_publish: confianza minima (0.0-1.0) del agente en una
+#   oportunidad de ahorro para que pueda quedar como `proposed`/`approved`
+#   sin intervencion humana. Por debajo de este umbral se degrada a
+#   `needs_review`.
+min_confidence_auto_publish: 0.6
+
+# max_auto_publish_usd: ahorro estimado (USD) por encima del cual, aunque la
+#   confianza sea alta, se exige revision humana antes de publicar (el
+#   riesgo economico de un error es demasiado alto para auto-publicar).
+max_auto_publish_usd: 250000
+
+# max_auto_publish_pct: limite de sanidad expresado en porcentaje. Se
+#   calcula como estimated_savings_usd / (suma de amount de las
+#   source_transaction_ids citadas) * 100. Un ahorro que exceda este
+#   porcentaje del gasto citado como evidencia es una senal de alucinacion
+#   o calculo erroneo (ej. "90% de ahorro" sin base real) y se degrada a
+#   needs_review para que un humano lo verifique antes de publicarse.
+max_auto_publish_pct: 25

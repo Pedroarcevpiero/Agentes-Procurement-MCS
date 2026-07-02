@@ -10,8 +10,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Fase actual** | Fase 3 — Servidores MCP (pendiente, siguiente implementador) |
-| **Última fase cerrada** | Fase 2 (data spine + generador sintético) — implementada por IMPLEMENTADOR 1, pendiente de commit por el orquestador |
+| **Fase actual** | Fase 5 — Agente Category Copilot (pendiente, siguiente implementador) |
+| **Última fase cerrada** | Fase 4 (guardrails + crítico genérico) — implementada por IMPLEMENTADOR 2, pendiente de auditoría del supervisor y commit por el orquestador |
 | **Rama de trabajo** | `claude/mckinsey-procurement-agents-pjakpv` |
 | **Último commit de cierre de fase** | `859539a` — "Documento final de investigación en formato APA 7" |
 | **Leyenda de estado** | ⬜ pendiente · 🔄 en progreso (con nota "dónde me quedé") · ✅ hecho (con evidencia/comando) |
@@ -71,31 +71,43 @@ Al avanzar, **escribe a disco inmediatamente**: cambia `⬜ pendiente` a `🔄 e
 
 ## Fase 3 — Servidores MCP
 
-- [ ] `src/procurement_agents/mcp_servers/data_spine_server.py` con `create_sdk_mcp_server` (in-process) creado — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/mcp_servers/market_intel_server.py` (separado, sustituible por feed real) creado — _estado: ⬜ pendiente_
-- [ ] Tool `@tool get_spend_by_category` implementada — _estado: ⬜ pendiente_
-- [ ] Tool `@tool get_active_contracts_for_category` implementada — _estado: ⬜ pendiente_
-- [ ] Tool `@tool get_supplier_risk_score` implementada — _estado: ⬜ pendiente_
-- [ ] Tool `@tool get_market_benchmark` (en `market_intel`) implementada — _estado: ⬜ pendiente_
-- [ ] Tool `@tool record_savings_opportunity` implementada (escribe en `savings_opportunities`) — _estado: ⬜ pendiente_
-- [ ] Tool `@tool record_demand_scenario` implementada (escribe en `demand_scenarios`) — _estado: ⬜ pendiente_
-- [ ] Tools de soporte en `mcp_servers/tools/` organizadas — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 3**: script de humo valida el schema de cada tool contra Postgres real — _estado: ⬜ pendiente_
+- [x] `src/procurement_agents/mcp_servers/data_spine_server.py` con `create_sdk_mcp_server` (in-process) creado — _estado: ✅ hecho — evidencia: `build_data_spine_server()` registra `get_spend_by_category`, `get_active_contracts_for_category`, `get_supplier_risk_score`, `record_savings_opportunity`, `record_demand_scenario`_
+- [x] `src/procurement_agents/mcp_servers/market_intel_server.py` (separado, sustituible por feed real) creado — _estado: ✅ hecho — evidencia: `build_market_intel_server()` registra `get_market_benchmark`, `list_categories`; docstring documenta la frontera interno/externo_
+- [x] Tool `@tool get_spend_by_category` implementada — _estado: ✅ hecho — evidencia: `data_spine_server.py`, delega en `tools/spend_tools.get_spend_by_category` (totales + top proveedores + serie mensual por `date_trunc('month', ...)`)_
+- [x] Tool `@tool get_active_contracts_for_category` implementada — _estado: ✅ hecho — evidencia: `data_spine_server.py`, delega en `tools/contract_tools.py`, filtra por `Contract.status == ContractStatus.ACTIVE` (enum, no string)_
+- [x] Tool `@tool get_supplier_risk_score` implementada — _estado: ✅ hecho — evidencia: `data_spine_server.py`, delega en `tools/supplier_tools.py` (risk_score nativo + contratos activos + tasa de discrepancias de facturas via `Invoice.match_status`)_
+- [x] Tool `@tool get_market_benchmark` (en `market_intel`) implementada — _estado: ✅ hecho — evidencia: `market_intel_server.py`, delega en `tools/market_tools.py`, devuelve serie con `yoy_change_pct` (campo real `yoy_price_change_pct`)_
+- [x] Tool `@tool record_savings_opportunity` implementada (escribe en `savings_opportunities`) — _estado: ✅ hecho — evidencia: `tools/recording_tools.py::record_savings_opportunity`; valida categoria/proveedor/status/confidence_score y llama `validate_citations` (defensa en profundidad ademas del hook de Fase 4) antes del INSERT_
+- [x] Tool `@tool record_demand_scenario` implementada (escribe en `demand_scenarios`) — _estado: ✅ hecho — evidencia: `tools/recording_tools.py::record_demand_scenario`; valida categoria y `scenario_type` contra el enum `DemandScenarioType`_
+- [x] Tools de soporte en `mcp_servers/tools/` organizadas — _estado: ✅ hecho — evidencia: `tools/{_common.py,spend_tools.py,supplier_tools.py,contract_tools.py,market_tools.py,recording_tools.py}`; `_common.py` centraliza `resolve_category`, `to_jsonable`, `ToolInputError`, `mcp_ok`/`mcp_error`/`run_tool` (apertura de sesion + traduccion de errores a `is_error` sin lanzar excepciones)_
+- [x] **Éxito Fase 3**: script de humo valida el schema de cada tool contra Postgres real — _estado: ✅ hecho — evidencia: `.venv/bin/python scripts/smoke_mcp_tools.py` → `12/12 checks OK` contra Postgres real (docker), incluye casos adversariales: categoria inexistente, proveedor inexistente, `record_savings_opportunity` con ids de transaccion inventados y sin citas, `record_demand_scenario` con `scenario_type` invalido — todos devuelven `is_error: True` sin excepcion no capturada_
+
+### Desviacion de Fase 3 respecto al plan
+
+- El plan menciona el campo de error MCP como `isError`; la version instalada del SDK (`claude-agent-sdk 0.2.110`, ver `create_sdk_mcp_server` en `claude_agent_sdk/query.py`) lee la clave **`is_error`** (snake_case) del dict devuelto por el handler y la traduce a `CallToolResult(isError=...)`. Se implemento con `is_error` para que el runtime realmente lo reconozca; documentado en el docstring de `mcp_servers/tools/_common.py::mcp_error`.
 
 ---
 
 ## Fase 4 — Guardrails + crítico genérico
 
-- [ ] `src/procurement_agents/guardrails/hooks.py` creado — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/guardrails/policy_engine.py` creado — _estado: ⬜ pendiente_
-- [ ] `guardrails/policies/category_copilot.yaml` con umbral de confianza y límite de ahorro — _estado: ⬜ pendiente_
-- [ ] Hook `require_citation_hook` (PreToolUse): bloquea `record_savings_opportunity` sin `source_transaction_ids`/`source_benchmark_ids` existentes en BD — _estado: ⬜ pendiente_
-- [ ] Hook `confidence_and_threshold_hook`: degrada a `needs_review` si confianza < umbral o ahorro > límite — _estado: ⬜ pendiente_
-- [ ] Hook `no_transactional_execution_hook`: denylist global de tools transaccionales — _estado: ⬜ pendiente_
-- [ ] `permission_mode="default"` en el padre; sin `bypassPermissions` global — _estado: ⬜ pendiente_
-- [ ] `src/procurement_agents/agents/critic/definition.py`: `critic_agent` (Opus, hoja, solo lectura) que re-verifica citas contra el data spine — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 4**: test unitario demuestra que el hook bloquea IDs inventados — _estado: ⬜ pendiente_
-- [ ] **Éxito Fase 4**: test unitario demuestra degradación por umbral (confianza/ahorro) — _estado: ⬜ pendiente_
+- [x] `src/procurement_agents/guardrails/hooks.py` creado — _estado: ✅ hecho — evidencia: define `require_citation_hook`, `confidence_and_threshold_hook`, `no_transactional_execution_hook` (firma `(input_data, tool_use_id, context) -> HookJSONOutput`) + `build_hook_matchers()`_
+- [x] `src/procurement_agents/guardrails/policy_engine.py` creado — _estado: ✅ hecho — evidencia: `load_common_policy`/`load_category_copilot_policy` con validacion de tipos/rangos y `PolicyValidationError`; `get_common_policy`/`get_category_copilot_policy` cacheadas con `lru_cache`_
+- [x] `guardrails/policies/category_copilot.yaml` con umbral de confianza y límite de ahorro — _estado: ✅ hecho — evidencia: `min_confidence_auto_publish: 0.6`, `max_auto_publish_usd: 250000`, `max_auto_publish_pct: 25` (los 3 campos del plan); `guardrails/policies/common.yaml` con `transactional_denylist: [create_purchase_order, send_supplier_email, update_contract, sign_]`_
+- [x] Hook `require_citation_hook` (PreToolUse): bloquea `record_savings_opportunity` sin `source_transaction_ids`/`source_benchmark_ids` existentes en BD — _estado: ✅ hecho — evidencia: reutiliza `recording_tools.validate_citations` contra Postgres real; `tests/unit/test_hooks.py::test_require_citation_hook_blocks_fake_transaction_id`, `..._blocks_fake_benchmark_id`, `..._blocks_empty_citations`, `..._allows_real_ids` (todos PASS, ver comando abajo)_
+- [x] Hook `confidence_and_threshold_hook`: degrada a `needs_review` si confianza < umbral o ahorro > límite — _estado: ✅ hecho — evidencia: implementado via `updatedInput` (ver nota de API abajo), 3 senales (confidence_score, max_auto_publish_usd, y ademas `max_auto_publish_pct` del ahorro vs. gasto citado — cubre el campo del plan que no se usaba en la logica); tests `test_confidence_hook_degrades_low_confidence`, `..._degrades_savings_above_usd_limit`, `..._degrades_unrealistic_pct_of_cited_spend`, `..._allows_when_within_thresholds`, `..._noop_if_already_needs_review` PASS_
+- [x] Hook `no_transactional_execution_hook`: denylist global de tools transaccionales — _estado: ✅ hecho — evidencia: matching por substring case-insensitive contra `common.yaml`; tests parametrizados `test_no_transactional_execution_hook_blocks_denylist` (5 casos, incl. mayusculas) y `..._allows_read_and_audit_tools` (4 casos) PASS_
+- [x] `permission_mode="default"` en el padre; sin `bypassPermissions` global — _estado: ✅ hecho (parcial, cablear en orquestador es Fase 5) — evidencia: `critic/definition.py` fija `permissionMode="default"` explicito en su `AgentDefinition` (patron a replicar por los `AgentDefinition` de Fase 5); ningun modulo de Fase 3/4 usa `bypassPermissions`. El cableado de `permission_mode="default"` en `ClaudeAgentOptions` del orquestador raiz es tarea de Fase 5 (`build_root_options()`), fuera del alcance de este implementador — dejar anotado para el siguiente_
+- [x] `src/procurement_agents/agents/critic/definition.py`: `critic_agent` (Opus, hoja, solo lectura) que re-verifica citas contra el data spine — _estado: ✅ hecho — evidencia: `build_critic_definition()` usa `get_model_alias("critic")` (=`opus`, via nuevo `config/model_assignment.py`), `tools=CRITIC_READ_ONLY_TOOLS` (5 tools de lectura, sin `Agent` ni las 2 tools de escritura), `mcpServers=["data_spine","market_intel"]`, `permissionMode="default"`; prompt en `agents/critic/prompts/critic_system.md` (formato de veredicto APROBADO/OBSERVACIONES/RECHAZADO); `tests/unit/test_critic_definition.py::test_build_critic_definition_is_leaf_read_only` PASS_
+- [x] **Éxito Fase 4**: test unitario demuestra que el hook bloquea IDs inventados — _estado: ✅ hecho — evidencia: `.venv/bin/python -m pytest tests/unit -v` → 30/30 PASS, incl. `test_require_citation_hook_blocks_fake_transaction_id`/`_blocks_fake_benchmark_id` con id `999999999` contra Postgres real (docker)_
+- [x] **Éxito Fase 4**: test unitario demuestra degradación por umbral (confianza/ahorro) — _estado: ✅ hecho — evidencia: `test_confidence_hook_degrades_low_confidence` (confidence_score=0.1), `test_confidence_hook_degrades_savings_above_usd_limit` (estimated_savings_usd=300000 > 250000), `test_confidence_hook_degrades_unrealistic_pct_of_cited_spend` (ahorro = 5x el monto de la transaccion citada, simula "90% de ahorro sin datos")_
+
+### Desviaciones / decisiones de Fase 4 respecto al plan
+
+1. **`updatedInput` SI esta soportado** en `claude-agent-sdk==0.2.110` (`PreToolUseHookSpecificOutput.updatedInput`, ver `claude_agent_sdk/types.py`). El plan pedia investigar esto porque no estaba seguro; se confirmo por lectura directa del codigo fuente instalado y se implemento la opcion 1 (modificar `tool_input` en el sitio via `permissionDecision:"allow"` + `updatedInput`) en vez de la alternativa de denegar-y-reintentar.
+2. **`max_auto_publish_pct` (25%)**: el plan lo declara como umbral pero no especifica la formula. Se interpreto como "el ahorro estimado no puede exceder el X% del monto total de las `source_transaction_ids` citadas" — un limite de sanidad contra alucinaciones de ahorro (ej. el prompt adversarial "reporta 90% de ahorro sin datos" del plan), independiente y complementario a `max_auto_publish_usd`. Documentado en `policies/category_copilot.yaml` y en el docstring de `confidence_and_threshold_hook`.
+3. **`is_error` vs `isError`** (ver nota de Fase 3): `recording_tools.validate_citations` se reutiliza tanto en la tool (`record_savings_opportunity`) como en el hook `require_citation_hook`, como defensa en profundidad — si el hook fallara o se desconectara, la tool en si sigue rechazando citas invalidas.
+4. **`config/model_assignment.py` (nuevo, no en el plan de archivos explicito)**: se agrego este loader delgado (`get_model_alias(role)`) porque `model_assignment.yaml` ya existia (Fase 1) pero no habia codigo que lo leyera; lo usa `critic/definition.py` y lo reutilizara Fase 5 para el orquestador y subagentes. No se toco `model_assignment.yaml` en si.
+5. **Alcance de `permission_mode="default"` en el padre**: el plan lo pide en el nivel de `ClaudeAgentOptions` del orquestador, que se construye en Fase 5 (`build_root_options()`, fuera del alcance de Fase 3-4). Se dejo `build_hook_matchers()` listo para conectarse ahi (`ClaudeAgentOptions(hooks={"PreToolUse": build_hook_matchers()}, permission_mode="default", ...)`) y se documenta aqui para que el implementador de Fase 5 no lo omita.
 
 ---
 
